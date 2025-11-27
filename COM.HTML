@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000; /* Black background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #FFD700; /* Dark Yellow text */
+    }
+
+    .container {
+      background: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+      width: 420px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      color: #FFD700;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      color: #FFD700;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      outline: none;
+      background: #000;
+      color: #FFD700;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #FFA500;
+      box-shadow: 0 0 8px #FFD700;
+    }
+
+    textarea {
+      resize: none;
+      height: 80px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #FFD700;
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 8px;
+    }
+
+    button:hover {
+      background: #FFA500;
+      color: #fff;
+    }
+
+    .close-btn {
+      background: #FF4500;
+      color: #fff;
+    }
+
+    .close-btn:hover {
+      background: #FF0000;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .status.success {
+      color: #00FF00;
+    }
+
+    .status.error {
+      color: #FF6347;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Complaint Form</h2>
+    <form id="complaintForm">
+      <label>Employee Name:</label>
+      <input type="text" id="empName" required autocomplete="name">
+
+      <label>Password:</label>
+      <input type="password" id="password" required autocomplete="current-password">
+
+      <label>Date:</label>
+      <input type="date" id="date" readonly required>
+
+      <label>Against Person:</label>
+      <input type="text" id="againstPerson" required>
+
+      <label>What's Complaint:</label>
+      <textarea id="complaint" required></textarea>
+
+      <button type="button" onclick="submitComplaint()">Submit</button>
+      <button type="button" class="close-btn" onclick="goBack()">Close</button>
+    </form>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <script>
+    // Auto-fill today's date
+    window.onload = function() {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("date").value = today;
+    };
+
+    function submitComplaint() {
+      const url = "https://script.google.com/macros/s/AKfycbzypVhieg2hW7PwQau7Se1qDQe0aT9MRGKOt4uQa2irQ2mCTKw9IZdO8w-HODnmqOY6ow/exec"; 
+
+      let payload = {
+        empName: document.getElementById("empName").value,
+        password: document.getElementById("password").value,
+        date: document.getElementById("date").value,
+        againstPerson: document.getElementById("againstPerson").value,
+        complaint: document.getElementById("complaint").value
+      };
+
+      const statusMsg = document.getElementById("statusMsg");
+      statusMsg.style.display = "block";
+      statusMsg.textContent = "⏳ Please wait, your data is being saved...";
+      statusMsg.className = "status";
+
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          statusMsg.textContent = "✅ Complaint submitted successfully!";
+          statusMsg.className = "status success";
+          document.getElementById("complaintForm").reset();
+
+          const today = new Date().toISOString().split("T")[0];
+          document.getElementById("date").value = today;
+        } else {
+          statusMsg.textContent = "❌ Invalid password. Please try again.";
+          statusMsg.className = "status error";
+        }
+      })
+      .catch(err => {
+        statusMsg.textContent = "⚠️ Error: " + err;
+        statusMsg.className = "status error";
+      });
+    }
+
+    // Close button function (🔙 back to previous page)
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>
