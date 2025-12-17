@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PTCL Employee Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#111315; --card:#1a1d20; --text:#eaeaea; --muted:#bcbcbc; --yellow:#ffd400; --danger:#e74c3c; }
+  *{box-sizing:border-box}
+  body { margin:0; background: radial-gradient(800px 400px at 50% -50%, rgba(255,212,0,.1), transparent 60%), var(--bg);
+         color:var(--text); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; min-height:100vh;
+         display:flex; align-items:center; justify-content:center; }
+  .card { width:min(520px,92vw); background:var(--card); border:1px solid rgba(255,212,0,.25);
+          border-radius:16px; padding:28px; box-shadow:0 0 40px rgba(255,212,0,.15),0 10px 30px rgba(0,0,0,.6); }
+  .logo { width:80px;height:80px;border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--yellow), #ffea80);
+          color:#000; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:36px; margin:0 auto 16px;
+          box-shadow:0 0 22px rgba(255,212,0,.6);}
+  h1 { text-align:center; margin:8px 0 22px; font-size:28px; font-weight:700; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 2px; }
+  input { width:100%; padding:14px; background:#0f1113; color:var(--text); border:1px solid rgba(255,212,0,.4); border-radius:10px; outline:none; }
+  input:focus { border-color:var(--yellow); box-shadow:0 0 0 3px rgba(255,212,0,.15); }
+  button { width:100%; padding:14px; border-radius:12px; border:1px solid var(--yellow);
+           background:linear-gradient(#111,#0d0d0d) padding-box, linear-gradient(90deg,var(--yellow),#fff08a) border-box;
+           color:#000; font-weight:700; font-size:16px; margin-top:16px; cursor:pointer; }
+  .error { color:var(--danger); margin-top:12px; text-align:center; min-height:1.2em; }
+  .foot { text-align:center; color:var(--muted); font-size:12px; margin-top:10px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">PTC</div>
+    <h1>Employee Login</h1>
+    <label>Employee ID</label>
+    <input id="empId" placeholder="e.g. E65" autocomplete="username">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button id="loginBtn">Login</button>
+    <div class="error" id="msg"></div>
+    <div class="foot">Created by Vinay Maan</div>
+  </div>
+
+<script src="app.js"></script>
+<script>
+  const empInput = document.getElementById('empId');
+  const passInput = document.getElementById('password');
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('loginBtn');
+
+  function setLoading(v){ btn.disabled=v; btn.textContent=v?'Please wait…':'Login'; }
+
+  btn.addEventListener('click', async () => {
+    msg.textContent='';
+    const empId = empInput.value.trim();
+    const password = passInput.value;
+    if (!empId || !password) { msg.textContent='Please enter Employee ID and Password'; return; }
+    try {
+      setLoading(true);
+      await login(empId, password);
+      window.location.href='dashboard.html';
+    } catch(e) {
+      msg.textContent = e.message || 'Login failed';
+    } finally {
+      setLoading(false);
+    }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+</script>
+</body>
+</html>
