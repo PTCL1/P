@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Employee Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#111315; --card:#1a1d20; --text:#eaeaea; --muted:#bcbcbc; --yellow:#ffd400; --danger:#e74c3c; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 60px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin:6px 0 18px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .logo{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 30% 30%, var(--yellow), #ffea80);box-shadow:0 0 18px rgba(255,212,0,.5);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:26px;}
+  .title{font-size:20px;font-weight:700;}
+  .logout{background:#ff6b6b;border:none;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700;}
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;}
+  .card{background:var(--card);border:1px solid rgba(255,212,0,.25);border-radius:16px;padding:18px;}
+  .hello{font-size:26px;font-weight:800;margin:0 0 10px;}
+  .profile{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .kv{border-top:1px solid rgba(255,212,0,.4);padding:10px 0;}
+  .kv b{color:var(--yellow);}
+  .photo{display:flex;align-items:flex-start;justify-content:center;}
+  .photo img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid var(--yellow);box-shadow:0 0 22px rgba(255,212,0,.4);}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+  .btn{padding:12px;border-radius:12px;border:1px solid var(--yellow);background:transparent;color:var(--yellow);font-weight:800;cursor:pointer;}
+  .btn.primary{background:var(--yellow);color:#000;}
+  .sections{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;}
+  .tbl th,.tbl td{border-bottom:1px dashed rgba(255,212,0,.3);padding:8px 6px;text-align:left;}
+  .tbl th{color:var(--yellow);}
+  .muted{color:var(--muted)}
+  .success{color:#24d17e}
+  .warn{color:#ffb020}
+  @media (max-width: 890px) { .grid{grid-template-columns:1fr;} .profile{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">G</div>
+      <div class="title">Employee Portal</div>
+    </div>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="grid">
+    <div class="card" id="profileCard">
+      <div class="hello" id="hello">Welcome</div>
+      <div class="profile">
+        <div id="details"></div>
+        <div>
+          <div class="photo"><img id="photo" src="" alt="photo" onerror="this.src='https://via.placeholder.com/150?text=Photo'"></div>
+          <div class="btns">
+            <button class="btn" onclick="openSection('leave-balance')">Leave Balance</button>
+            <button class="btn primary" onclick="openSection('attendance')">Attendance</button>
+            <button class="btn" onclick="openSection('salary')">Salary Slip</button>
+            <button class="btn" onclick="openSection('documents')">Documents</button>
+            <button class="btn" onclick="openSection('complaints')">Complaints Status</button>
+            <button class="btn" onclick="window.location.href='COM.HTML'">Complaint Apply</button>
+            <button class="btn" onclick="openSection('bonus')">Bonus</button>
+            <button class="btn" onclick="openSection('leaves')">Leave Status</button>
+            <button class="btn" onclick="showLeaveModal()">Leave Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="sectionCard">
+      <div id="sectionTitle" class="hello" style="font-size:20px;margin-bottom:4px;">Select an option</div>
+      <div id="sectionBody" class="muted">Buttons se data dekhiye.</div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  const sectionTitle = document.getElementById('sectionTitle');
+  const sectionBody = document.getElementById('sectionBody');
+
+  function kv(label, value) {
+    return `<div class="kv"><b>${label}:</b> <span> ${value ?? ''}</span></div>`;
+  }
+
+  function openSection(key) {
+    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests'};
+    sectionTitle.textContent = titles[key] || 'Details';
+    const d = window.__DATA__; if (!d) return;
+
+    if (key === 'leave-balance') {
+      const lb = d.leaveBalance || {};
+      sectionBody.innerHTML = `<table class="tbl">
+          <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
+          <tr>   <td>${lb.LastYearEL ?? '-'}</td>  <td>${lb.TotalEL ?? '-'}</td>  <td>${lb.TotalCL ?? '-'}</td> <td>${lb.TakenCL ?? '-'}</td> <td>${lb.TakenEL ?? '-'}</td>  <td>${lb.BalanceCL ?? '-'}</td> <td>${lb.BalanceEL ?? '-'}</td></tr>
+        </table>`;
+    } else if (key === 'attendance') {
+      const rows = d.attendance || [];
+      const html = rows.slice(-32).reverse().map(r => `
+        <tr><td>${r.Date||''}</td><td>${r.InTime||''}</td><td>${r.OutTime||''}</td><td>${r.Status||''}</td><td>${r.Remarks||''}</td></tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+          <tr><th>Date</th><th>In</th><th>Out</th><th>Days</th><th>Remarks</th></tr>
+          ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
+        </table>`;
+    } else if (key === 'salary') {
+      const rows = d.salarySlips || [];
+      const html = rows.reverse().map(r =>  `
+        <tr><td>${r.Month||''}-${r.Year||''}</td><td>${r.Gross||''}</td><td>${r.Deductions||''}</td><td>${r.Net||''}</td>
+        <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+          <tr><th>Month</th><th>PDFUrl</th></tr>${html || '<tr><td colspan="2" class="muted">No salary slips</td></tr>'}
+        </table>`;
+    } else if (key === 'documents') {
+      const rows = d.documents || [];
+      const html = rows.map(r => `<tr><td>${r.Type||''}</td><td>${r.Name||''}</td><td>${r.FileUrl?`<a href="${r.FileUrl}" target="_blank">Open</a>`:'-'}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}</table>`;
+    } else if (key === 'complaints') {
+      const rows = d.complaints || [];
+      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Description||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Against</th><th>Complanit</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}</table>`;
+    } else if (key === 'bonus') {
+      const rows = d.bonus || [];
+      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Amount||''}</td><td>${r.Notes||''}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}</table>`;
+    } else if (key === 'leaves') {
+      const rows = d.leaveRequests || [];
+      const html = rows.reverse().map(r => `<tr><td>${r.FromDate||''}</td><td>${r.ToDate||''}</td><td>${r.Type||''}</td><td>${r.Reason||''}</td><td>${r.Status||''}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}</table>`;
+    }
+  }
+
+  function showLeaveModal() {
+    const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
+    const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
+    const type = prompt('Type (Full/Half/SL):','Full'); const reason = prompt('Reason:') || '';
+    sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
+    applyLeave({ fromDate, toDate, type, reason })
+      .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
+      .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
+  }
+
+
+  
+  async function init() {
+    const name = localStorage.getItem('ep_name');
+    if (name) document.getElementById('hello').textContent = 'Welcome, ' + name.toUpperCase();
+    try {
+      const d = await fetchMe();
+      window.__DATA__ = d;
+      const p = d.profile || {};
+      document.getElementById('hello').textContent = 'Welcome, ' + (p.Name || '').toUpperCase();
+      document.getElementById('photo').src = p.PhotoURL || 'https://via.placeholder.com/150?text=Photo';
+
+      const details = `
+        ${kv('Employee ID', p.EmpID)}
+        ${kv('Emp Code', p.EmpCode)}
+        ${kv('Designation', p.Designation)}
+        ${kv("Father's Name", p.FatherName)}
+        ${kv('Gender', p.Gender)}
+        ${kv('ESIC Number', p.ESICNumber)}
+        ${kv('PF Number', p.PFNumber)}
+        ${kv('Date of Birth', p.DOB)}
+        ${kv('Mobile', p.Mobile)}
+        ${kv('Aadhar', p.Aadhar)}
+        ${kv('ID Proof', p.IDProof)}
+        ${kv('Permanent Address', p.PermanentAddress)}
+        ${kv('Local Address', p.LocalAddress)}
+        ${kv('Joining Date', p.JoiningDate)}
+        ${kv('Emergency Contact', p.EmergencyContact)}
+        ${kv('Status', p.Status)}
+      `;
+      document.getElementById('details').innerHTML = details;
+    } catch (e) {
+      alert('Session expired. Please login again.');
+      logout();
+    }
+  }
+  init();
+</script>
+</body>
+</html>
