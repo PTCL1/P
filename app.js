@@ -1,5 +1,5 @@
 // ====== CONFIG ======
-const API_URL = 'https://script.google.com/a/macros/ptcl.co.in/s/AKfycbxVM_euuBkWOhjzRWfushPeNoDgnkmj5LnrwVV-0ZJC7ZfVBnuRsoKZ0gRTIwGMFl65OA/exec'; // e.g. https://script.google.com/macros/s/AKfycbx.../exec
+const API_URL = 'https://script.google.com/a/macros/AKfycbxVM_euuBkWOhjzRWfushPeNoDgnkmj5LnrwVV-0ZJC7ZfVBnuRsoKZ0gRTIwGMFl65OA/exec'; // e.g. https://script.google.com/macros/s/AKfycbx.../exec
 
 async function api(action, data = {}) {
   const body = new URLSearchParams({ action, ...data });
