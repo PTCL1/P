@@ -24,11 +24,10 @@
   .kv{border-top:1px solid rgba(255,212,0,.4);padding:10px 0;}
   .kv b{color:var(--yellow);}
   .photo{display:flex;align-items:flex-start;justify-content:center;}
-  .photo img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid var(--yellow);box-shadow:0 0 22px rgba(255,212,0,.4);}
+  .photo img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid var(--yellow);box-shadow:0 0 22px rgba(255,212,0,.4);background:#0f0f0f;}
   .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
   .btn{padding:12px;border-radius:12px;border:1px solid var(--yellow);background:transparent;color:var(--yellow);font-weight:800;cursor:pointer;}
   .btn.primary{background:var(--yellow);color:#000;}
-  .sections{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px;}
   .tbl{width:100%;border-collapse:collapse;font-size:14px;}
   .tbl th,.tbl td{border-bottom:1px dashed rgba(255,212,0,.3);padding:8px 6px;text-align:left;}
   .tbl th{color:var(--yellow);}
@@ -54,7 +53,9 @@
       <div class="profile">
         <div id="details"></div>
         <div>
-          <div class="photo"><img id="photo" src="" alt="photo" onerror="this.src='https://via.placeholder.com/150?text=Photo'"></div>
+          <div class="photo">
+            <img id="photo" src="" alt="photo" loading="lazy">
+          </div>
           <div class="btns">
             <button class="btn" onclick="openSection('leave-balance')">Leave Balance</button>
             <button class="btn primary" onclick="openSection('attendance')">Attendance</button>
@@ -72,7 +73,7 @@
 
     <div class="card" id="sectionCard">
       <div id="sectionTitle" class="hello" style="font-size:20px;margin-bottom:4px;">Select an option</div>
-      <div id="sectionBody" class="muted">Buttons se data dekhiye./ बटन से डाटा देखिए </div>
+      <div id="sectionBody" class="muted">Buttons se data dekhiye./ बटन से डाटा देखिए</div>
     </div>
   </div>
 </div>
@@ -81,79 +82,156 @@
 <script>
   const sectionTitle = document.getElementById('sectionTitle');
   const sectionBody = document.getElementById('sectionBody');
+  const placeholderPhoto = 'https://via.placeholder.com/150?text=Photo';
+
+  function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, (c) => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+  function escAttr(v) { return esc(v).replace(/`/g, '&#96;'); }
 
   function kv(label, value) {
-    return `<div class="kv"><b>${label}:</b> <span> ${value ?? ''}</span></div>`;
+    return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`;
   }
 
   function openSection(key) {
-    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests'};
+    const titles = {
+      'leave-balance':'Leave Balance',
+      'attendance':'Attendance',
+      'salary':'Salary Slips',
+      'documents':'Documents',
+      'complaints':'Complaints',
+      'bonus':'Bonus',
+      'leaves':'Leave Requests'
+    };
     sectionTitle.textContent = titles[key] || 'Details';
-    const d = window.__DATA__; if (!d) return;
+
+    const d = window.__DATA__;
+    if (!d) return;
 
     if (key === 'leave-balance') {
       const lb = d.leaveBalance || {};
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
-          <tr>   <td>${lb.LastYearEL ?? '-'}</td>  <td>${lb.TotalEL ?? '-'}</td>  <td>${lb.TotalCL ?? '-'}</td> <td>${lb.TakenCL ?? '-'}</td> <td>${lb.TakenEL ?? '-'}</td>  <td>${lb.BalanceCL ?? '-'}</td> <td>${lb.BalanceEL ?? '-'}</td></tr>
-        </table>`;
+        <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
+        <tr>
+          <td>${esc(lb.LastYearEL ?? '-')}</td>
+          <td>${esc(lb.TotalEL ?? '-')}</td>
+          <td>${esc(lb.TotalCL ?? '-')}</td>
+          <td>${esc(lb.TakenCL ?? '-')}</td>
+          <td>${esc(lb.TakenEL ?? '-')}</td>
+          <td>${esc(lb.BalanceCL ?? '-')}</td>
+          <td>${esc(lb.BalanceEL ?? '-')}</td>
+        </tr>
+      </table>`;
     } else if (key === 'attendance') {
       const rows = d.attendance || [];
-      const html = rows.slice(-32).reverse().map(r => `
-        <tr><td>${r.Date||''}</td><td>${r.InTime||''}</td><td>${r.OutTime||''}</td><td>${r.Status||''}</td><td>${r.Remarks||''}</td></tr>
+      const html = rows.slice(-32).slice().reverse().map(r => `
+        <tr><td>${esc(r.Date||'')}</td><td>${esc(r.InTime||'')}</td><td>${esc(r.OutTime||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Remarks||'')}</td></tr>
       `).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Date</th><th>In</th><th>Out</th><th>Days</th><th>Remarks</th></tr>
-          ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
-        </table>`;
+        <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
+      </table>`;
     } else if (key === 'salary') {
       const rows = d.salarySlips || [];
-      const html = rows.reverse().map(r =>  `
-        <tr><td>${r.Month||''}-${r.Year||''}</td><td>${r.Gross||''}</td><td>${r.Deductions||''}</td><td>${r.Net||''}</td>
-        <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td></tr>`).join('');
+      const html = rows.slice().reverse().map(r =>  `
+        <tr>
+          <td>${esc((r.Month||'') + '-' + (r.Year||''))}</td>
+          <td>${esc(r.Gross||'')}</td>
+          <td>${esc(r.Deductions||'')}</td>
+          <td>${esc(r.Net||'')}</td>
+          <td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank" rel="noopener">View PDF</a>` : '-'}</td>
+        </tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Month</th><th>PDFUrl</th></tr>${html || '<tr><td colspan="2" class="muted">No salary slips</td></tr>'}
-        </table>`;
+        <tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No salary slips</td></tr>'}
+      </table>`;
     } else if (key === 'documents') {
       const rows = d.documents || [];
-      const html = rows.map(r => `<tr><td>${r.Type||''}</td><td>${r.Name||''}</td><td>${r.FileUrl?`<a href="${r.FileUrl}" target="_blank">Open</a>`:'-'}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}</table>`;
+      const html = rows.map(r => `
+        <tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl?`<a href="${escAttr(r.FileUrl)}" target="_blank" rel="noopener">Open</a>`:'-'}</td></tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>
+        ${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}
+      </table>`;
     } else if (key === 'complaints') {
       const rows = d.complaints || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Description||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Against</th><th>Complanit</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}</table>`;
+      const html = rows.slice().reverse().map(r => `
+        <tr><td>${esc(r.Date||'')}</td><td>${esc(r.Subject||'')}</td><td>${esc(r.Description||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Response||'')}</td></tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Against</th><th>Complaint</th><th>Status</th><th>Response</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}
+      </table>`;
     } else if (key === 'bonus') {
       const rows = d.bonus || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Amount||''}</td><td>${r.Notes||''}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}</table>`;
+      const html = rows.slice().reverse().map(r => `
+        <tr><td>${esc(r.Date||'')}</td><td>${esc(r.Amount||'')}</td><td>${esc(r.Notes||'')}</td></tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>
+        ${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}
+      </table>`;
     } else if (key === 'leaves') {
       const rows = d.leaveRequests || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.FromDate||''}</td><td>${r.ToDate||''}</td><td>${r.Type||''}</td><td>${r.Reason||''}</td><td>${r.Status||''}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}</table>`;
+      const html = rows.slice().reverse().map(r => `
+        <tr><td>${esc(r.FromDate||'')}</td><td>${esc(r.ToDate||'')}</td><td>${esc(r.Type||'')}</td><td>${esc(r.Reason||'')}</td><td>${esc(r.Status||'')}</td></tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}
+      </table>`;
     }
   }
+
+  function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
 
   function showLeaveModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
     const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-    const type = prompt('Type (Full/Half/SL):','Full'); const reason = prompt('Reason:') || '';
+
+    if (!isISODate(fromDate) || !isISODate(toDate)) {
+      sectionBody.innerHTML = '<div class="warn">Invalid date format. Use YYYY-MM-DD</div>';
+      return;
+    }
+    if (toDate < fromDate) {
+      sectionBody.innerHTML = '<div class="warn">To date cannot be before From date.</div>';
+      return;
+    }
+
+    const type = prompt('Type (Full/Half/SL):','Full') || 'Full';
+    const reason = prompt('Reason:') || '';
+
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
       .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
-      .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
+      .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+esc(e.message||'Failed')+'</div>'; });
   }
 
+  function setPhotoSrc(raw) {
+    const img = document.getElementById('photo');
+    const val = String(raw || '').trim();
 
-  
+    // If server accidentally sends non-image data URL, ignore it
+    let src = val;
+    if (src.startsWith('data:') && !src.startsWith('data:image/')) src = '';
+
+    if (!src) src = placeholderPhoto;
+
+    img.onerror = () => { img.src = placeholderPhoto; };
+    img.src = src;
+  }
+
   async function init() {
     const name = localStorage.getItem('ep_name');
-    if (name) document.getElementById('hello').textContent = 'Welcome, ' + name.toUpperCase();
+    if (name) document.getElementById('hello').textContent = 'Welcome, ' + String(name).toUpperCase();
+
     try {
       const d = await fetchMe();
       window.__DATA__ = d;
+
       const p = d.profile || {};
-      document.getElementById('hello').textContent = 'Welcome, ' + (p.Name || '').toUpperCase();
-      document.getElementById('photo').src = p.PhotoURL || 'https://via.placeholder.com/150?text=Photo';
+      document.getElementById('hello').textContent = 'Welcome, ' + String(p.Name || '').toUpperCase();
+
+      setPhotoSrc(p.PhotoURL);
 
       const details = `
         ${kv('Employee ID', p.EmpID)}
@@ -174,11 +252,13 @@
         ${kv('Status', p.Status)}
       `;
       document.getElementById('details').innerHTML = details;
+
     } catch (e) {
       alert('Session expired. Please login again.');
       logout();
     }
   }
+
   init();
 </script>
 </body>
