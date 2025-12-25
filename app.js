@@ -5,7 +5,6 @@ const API_TIMEOUT_MS = 15000;
 async function api(action, data = {}) {
   const body = new URLSearchParams();
   body.set('action', action);
-
   for (const [k, v] of Object.entries(data)) {
     if (v === undefined || v === null) continue;
     body.set(k, String(v));
@@ -43,7 +42,6 @@ async function api(action, data = {}) {
   return json;
 }
 
-// ====== AUTH STORAGE ======
 function saveToken(t) { localStorage.setItem('ep_token', t); }
 function getToken() { return localStorage.getItem('ep_token'); }
 function clearAuth() {
@@ -51,7 +49,6 @@ function clearAuth() {
   localStorage.removeItem('ep_name');
 }
 
-// ====== API WRAPPERS ======
 async function login(empId, password) {
   const r = await api('login', { empId, password });
   if (r.token) saveToken(r.token);
