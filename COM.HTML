@@ -7,16 +7,15 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #000; /* Black background */
+      background: #000;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      color: #FFD700; /* Dark Yellow text */
+      color: #FFD700;
     }
-
     .container {
       background: #111;
       padding: 30px;
@@ -25,21 +24,8 @@
       width: 420px;
       animation: fadeIn 0.6s ease-in-out;
     }
-
-    h2 {
-      text-align: center;
-      color: #FFD700;
-      margin-bottom: 20px;
-      font-size: 22px;
-    }
-
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 6px;
-      color: #FFD700;
-    }
-
+    h2 { text-align: center; color: #FFD700; margin-bottom: 20px; font-size: 22px; }
+    label { font-weight: 600; display: block; margin-bottom: 6px; color: #FFD700; }
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -51,17 +37,8 @@
       color: #FFD700;
       transition: 0.3s;
     }
-
-    input:focus, textarea:focus {
-      border-color: #FFA500;
-      box-shadow: 0 0 8px #FFD700;
-    }
-
-    textarea {
-      resize: none;
-      height: 80px;
-    }
-
+    input:focus, textarea:focus { border-color: #FFA500; box-shadow: 0 0 8px #FFD700; }
+    textarea { resize: none; height: 80px; }
     button {
       width: 100%;
       padding: 12px;
@@ -75,119 +52,94 @@
       transition: 0.3s;
       margin-top: 8px;
     }
-
-    button:hover {
-      background: #FFA500;
-      color: #fff;
-    }
-
-    .close-btn {
-      background: #FF4500;
-      color: #fff;
-    }
-
-    .close-btn:hover {
-      background: #FF0000;
-    }
-
-    .status {
-      text-align: center;
-      margin-top: 15px;
-      font-weight: 500;
-      display: none;
-    }
-
-    .status.success {
-      color: #00FF00;
-    }
-
-    .status.error {
-      color: #FF6347;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    button:hover { background: #FFA500; color: #fff; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .close-btn { background: #FF4500; color: #fff; }
+    .close-btn:hover { background: #FF0000; }
+    .status { text-align: center; margin-top: 15px; font-weight: 500; display: none; }
+    .status.success { color: #00FF00; }
+    .status.error { color: #FF6347; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Complaint Form</h2>
+
     <form id="complaintForm">
       <label>Employee Name:</label>
-      <input type="text" id="empName" required autocomplete="name">
-
-      <label>Password:</label>
-      <input type="password" id="password" required autocomplete="current-password">
+      <input type="text" id="empName" readonly>
 
       <label>Date:</label>
       <input type="date" id="date" readonly required>
 
-      <label>Against Person:</label>
+      <label>Against Person / Subject:</label>
       <input type="text" id="againstPerson" required>
 
       <label>What's Complaint:</label>
       <textarea id="complaint" required></textarea>
 
-      <button type="button" onclick="submitComplaint()">Submit</button>
+      <button id="submitBtn" type="button" onclick="submitComplaint()">Submit</button>
       <button type="button" class="close-btn" onclick="goBack()">Close</button>
     </form>
+
     <div class="status" id="statusMsg"></div>
   </div>
 
+  <script src="app.js"></script>
   <script>
-    // Auto-fill today's date
-    window.onload = function() {
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("date").value = today;
-    };
-
-    function submitComplaint() {
-      const url = "https://script.google.com/a/macros/ptcl.co.in/s/AKfycbxVM_euuBkWOhjzRWfushPeNoDgnkmj5LnrwVV-0ZJC7ZfVBnuRsoKZ0gRTIwGMFl65OA/exec"; 
-
-      let payload = {
-        empName: document.getElementById("empName").value,
-        password: document.getElementById("password").value,
-        date: document.getElementById("date").value,
-        againstPerson: document.getElementById("againstPerson").value,
-        complaint: document.getElementById("complaint").value
-      };
-
-      const statusMsg = document.getElementById("statusMsg");
-      statusMsg.style.display = "block";
-      statusMsg.textContent = "⏳ Please wait, your data is being saved...";
-      statusMsg.className = "status";
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          statusMsg.textContent = "✅ Complaint submitted successfully!";
-          statusMsg.className = "status success";
-          document.getElementById("complaintForm").reset();
-
-          const today = new Date().toISOString().split("T")[0];
-          document.getElementById("date").value = today;
-        } else {
-          statusMsg.textContent = "❌ Invalid password. Please try again.";
-          statusMsg.className = "status error";
-        }
-      })
-      .catch(err => {
-        statusMsg.textContent = "⚠️ Error: " + err;
-        statusMsg.className = "status error";
-      });
+    function todayISO() {
+      return new Date().toISOString().split("T")[0];
     }
 
-    // Close button function (🔙 back to previous page)
+    window.onload = async function () {
+      document.getElementById("date").value = todayISO();
+
+      // Name from localStorage (set during login)
+      const name = localStorage.getItem('ep_name') || '';
+      document.getElementById("empName").value = name;
+
+      // If token missing, go login
+      if (!localStorage.getItem('ep_token')) {
+        alert('Please login again.');
+        window.location.href = 'index.html';
+        return;
+      }
+    };
+
+    async function submitComplaint() {
+      const statusMsg = document.getElementById("statusMsg");
+      const btn = document.getElementById("submitBtn");
+
+      const date = document.getElementById("date").value || todayISO();
+      const againstPerson = document.getElementById("againstPerson").value.trim();
+      const complaint = document.getElementById("complaint").value.trim();
+
+      statusMsg.style.display = "block";
+      statusMsg.className = "status";
+      statusMsg.textContent = "Please wait, your complaint is being saved...";
+      btn.disabled = true;
+
+      try {
+        await applyComplaint({ date, againstPerson, complaint });
+
+        statusMsg.textContent = "Complaint submitted successfully!";
+        statusMsg.className = "status success";
+
+        document.getElementById("complaintForm").reset();
+        document.getElementById("date").value = todayISO();
+        document.getElementById("empName").value = localStorage.getItem('ep_name') || '';
+      } catch (err) {
+        statusMsg.textContent = "Error: " + (err.message || String(err));
+        statusMsg.className = "status error";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
     function goBack() {
       window.history.back();
     }
   </script>
 </body>
 </html>
-
