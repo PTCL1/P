@@ -59,7 +59,7 @@
 <body>
 
 <div id="loadingOverlay" class="loadingOverlay hidden" aria-live="polite" aria-busy="true">
-  <div class="loadingBox">..... PLEASE WAIT .....</div>
+  <div class="loadingBox">..... PLEASE WAIT (5-10 sec).....</div>
 </div>
 
 <div class="wrap">
@@ -217,7 +217,7 @@
 
   async function init() {
     setLoading(true);
-    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT( 5-10 Sec) .....</div>';
+    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT (5-10 sec) .....</div>';
 
     try {
       const d = await fetchMe();
