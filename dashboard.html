@@ -29,13 +29,15 @@
   .btn{padding:12px;border-radius:12px;border:1px solid var(--yellow);background:transparent;color:var(--yellow);font-weight:800;cursor:pointer;}
   .btn.primary{background:var(--yellow);color:#000;}
   .tbl{width:100%;border-collapse:collapse;font-size:14px;}
-  .tbl th,.tbl td{border-bottom:1px dashed rgba(255,212,0,.3);padding:8px 6px;text-align:left;}
+  .tbl th,.tbl td{border-bottom:1px dashed rgba(255,212,0,.3);padding:8px 6px;text-align:left;vertical-align:top;}
   .tbl th{color:var(--yellow);}
   .muted{color:var(--muted)}
   .success{color:#24d17e}
   .warn{color:#ffb020}
+  a{color:var(--yellow);text-decoration:underline;}
   @media (max-width: 890px) { .grid{grid-template-columns:1fr;} .profile{grid-template-columns:1fr;} }
 
+  /* ===== Loading Overlay ===== */
   .loadingOverlay{
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -59,7 +61,7 @@
 <body>
 
 <div id="loadingOverlay" class="loadingOverlay hidden" aria-live="polite" aria-busy="true">
-  <div class="loadingBox">..... PLEASE WAIT (5-10 sec).....</div>
+  <div class="loadingBox">..... PLEASE WAIT .....</div>
 </div>
 
 <div class="wrap">
@@ -108,7 +110,7 @@
   const sectionBody = document.getElementById('sectionBody');
   const loadingOverlay = document.getElementById('loadingOverlay');
 
-  // Inline placeholder (no network dependency)
+  // Inline placeholder (no dependency)
   const placeholderPhoto =
     "data:image/svg+xml;charset=UTF-8," +
     encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150">
@@ -117,17 +119,12 @@
         fill="#ffd400" font-family="Inter, Arial" font-size="16" font-weight="700">PHOTO</text>
     </svg>`);
 
-  // ✅ If you are NOT running on GitHub Pages and want direct raw github fallback, set these:
+  // If your site is NOT on GitHub Pages, set RAW_GITHUB_BASE (optional)
   // const RAW_GITHUB_BASE = 'https://raw.githubusercontent.com/USERNAME/REPO/main/photos';
-  const RAW_GITHUB_BASE = ''; // keep empty if using GitHub Pages / same hosting
+  const RAW_GITHUB_BASE = '';
 
   function setLoading(on) {
     loadingOverlay.classList.toggle('hidden', !on);
-    document.querySelectorAll('button').forEach(b => {
-      b.disabled = on;
-      b.style.opacity = on ? '0.6' : '1';
-      b.style.cursor = on ? 'not-allowed' : 'pointer';
-    });
   }
 
   function esc(v) {
@@ -135,26 +132,26 @@
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
   }
+  function escAttr(v) { return esc(v).replace(/`/g, '&#96;'); }
 
   function kv(label, value) {
     return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`;
   }
 
-  // ✅ Build candidates from EmpCode
   function photoCandidatesByCode(code) {
     const c = String(code || '').trim().toUpperCase();
     if (!c) return [placeholderPhoto];
 
-    const relBase = `photos/${encodeURIComponent(c)}`;
+    const rel = `photos/${encodeURIComponent(c)}`;
     const list = [
-      `${relBase}.jpg?v=1`,
-      `${relBase}.jpeg?v=1`,
-      `${relBase}.png?v=1`,
+      `${rel}.jpg?v=1`,
+      `${rel}.jpeg?v=1`,
+      `${rel}.png?v=1`
     ];
 
     if (RAW_GITHUB_BASE) {
-      const remoteBase = `${RAW_GITHUB_BASE}/${encodeURIComponent(c)}`;
-      list.push(`${remoteBase}.jpg?v=1`, `${remoteBase}.jpeg?v=1`, `${remoteBase}.png?v=1`);
+      const remote = `${RAW_GITHUB_BASE}/${encodeURIComponent(c)}`;
+      list.push(`${remote}.jpg?v=1`, `${remote}.jpeg?v=1`, `${remote}.png?v=1`);
     }
 
     list.push(placeholderPhoto);
@@ -165,30 +162,156 @@
     const img = document.getElementById('photo');
     const tries = photoCandidatesByCode(empCode);
     let i = 0;
-
     img.onerror = () => {
       i++;
       if (i < tries.length) img.src = tries[i];
     };
-
     img.src = tries[i];
   }
 
   function openSection(key) {
-    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests'};
+    const titles = {
+      'leave-balance':'Leave Balance',
+      'attendance':'Attendance',
+      'salary':'Salary Slips',
+      'documents':'Documents',
+      'complaints':'Complaints',
+      'bonus':'Bonus',
+      'leaves':'Leave Requests'
+    };
     sectionTitle.textContent = titles[key] || 'Details';
-    const d = window.__DATA__; if (!d) return;
+
+    const d = window.__DATA__;
+    if (!d) {
+      sectionBody.innerHTML = '<div class="warn">Data not loaded. Please refresh.</div>';
+      return;
+    }
+
+    if (key === 'leave-balance') {
+      const lb = d.leaveBalance || {};
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr>
+          <th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th>
+          <th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th>
+        </tr>
+        <tr>
+          <td>${esc(lb.LastYearEL ?? '-')}</td>
+          <td>${esc(lb.TotalEL ?? '-')}</td>
+          <td>${esc(lb.TotalCL ?? '-')}</td>
+          <td>${esc(lb.TakenCL ?? '-')}</td>
+          <td>${esc(lb.TakenEL ?? '-')}</td>
+          <td>${esc(lb.BalanceCL ?? '-')}</td>
+          <td>${esc(lb.BalanceEL ?? '-')}</td>
+        </tr>
+      </table>`;
+      return;
+    }
 
     if (key === 'attendance') {
       const rows = d.attendance || [];
       const html = rows.slice(-32).slice().reverse().map(r => `
-        <tr><td>${esc(r.Date||'')}</td><td>${esc(r.InTime||'')}</td><td>${esc(r.OutTime||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Remarks||'')}</td></tr>
+        <tr>
+          <td>${esc(r.Date||'')}</td>
+          <td>${esc(r.InTime||'')}</td>
+          <td>${esc(r.OutTime||'')}</td>
+          <td>${esc(r.Status||'')}</td>
+          <td>${esc(r.Remarks||'')}</td>
+        </tr>
       `).join('');
       sectionBody.innerHTML = `<table class="tbl">
         <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>
         ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
       </table>`;
+      return;
     }
+
+    if (key === 'salary') {
+      const rows = d.salarySlips || [];
+      const html = rows.slice().reverse().map(r => `
+        <tr>
+          <td>${esc((r.Month||'') + '-' + (r.Year||''))}</td>
+          <td>${esc(r.Gross||'')}</td>
+          <td>${esc(r.Deductions||'')}</td>
+          <td>${esc(r.Net||'')}</td>
+          <td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank" rel="noopener">View PDF</a>` : '-'}</td>
+        </tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No salary slips</td></tr>'}
+      </table>`;
+      return;
+    }
+
+    if (key === 'documents') {
+      const rows = d.documents || [];
+      const html = rows.map(r => `
+        <tr>
+          <td>${esc(r.Type||'')}</td>
+          <td>${esc(r.Name||'')}</td>
+          <td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank" rel="noopener">Open</a>` : '-'}</td>
+        </tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr><th>Type</th><th>Name</th><th>Link</th></tr>
+        ${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}
+      </table>`;
+      return;
+    }
+
+    if (key === 'complaints') {
+      const rows = d.complaints || [];
+      const html = rows.slice().reverse().map(r => `
+        <tr>
+          <td>${esc(r.Date||'')}</td>
+          <td>${esc(r.Subject||'')}</td>
+          <td>${esc(r.Description||'')}</td>
+          <td>${esc(r.Status||'')}</td>
+          <td>${esc(r.Response||'')}</td>
+        </tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr><th>Date</th><th>Subject</th><th>Description</th><th>Status</th><th>Response</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}
+      </table>`;
+      return;
+    }
+
+    if (key === 'bonus') {
+      const rows = d.bonus || [];
+      const html = rows.slice().reverse().map(r => `
+        <tr>
+          <td>${esc(r.Date||'')}</td>
+          <td>${esc(r.Amount||'')}</td>
+          <td>${esc(r.Notes||'')}</td>
+        </tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr><th>Date</th><th>Amount</th><th>Notes</th></tr>
+        ${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}
+      </table>`;
+      return;
+    }
+
+    if (key === 'leaves') {
+      const rows = d.leaveRequests || [];
+      const html = rows.slice().reverse().map(r => `
+        <tr>
+          <td>${esc(r.FromDate||'')}</td>
+          <td>${esc(r.ToDate||'')}</td>
+          <td>${esc(r.Type||'')}</td>
+          <td>${esc(r.Reason||'')}</td>
+          <td>${esc(r.Status||'')}</td>
+        </tr>
+      `).join('');
+      sectionBody.innerHTML = `<table class="tbl">
+        <tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>
+        ${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}
+      </table>`;
+      return;
+    }
+
+    sectionBody.innerHTML = '<div class="muted">No view for this section.</div>';
   }
 
   function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
@@ -211,13 +334,13 @@
 
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
-      .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; })
+      .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+esc(e.message||'Failed')+'</div>'; });
   }
 
   async function init() {
     setLoading(true);
-    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT (5-10 sec) .....</div>';
+    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT .....</div>';
 
     try {
       const d = await fetchMe();
@@ -226,7 +349,7 @@
       const p = d.profile || {};
       document.getElementById('hello').textContent = 'Welcome, ' + String(p.Name || '').toUpperCase();
 
-      // ✅ Photo from EmpCode (GitHub photos folder)
+      // Photo from EmpCode (photos folder)
       setPhotoByEmpCode(p.EmpCode);
 
       const details = `
