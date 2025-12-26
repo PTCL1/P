@@ -69,6 +69,14 @@ async function applyLeave(payload) {
   return api('applyleave', { token, ...payload });
 }
 
+async function applyComplaint(payload) {
+  const token = getToken();
+  if (!token) throw new Error('No token');
+  return api('applycomplaint', { token, ...payload });
+}
+
+
+
 async function logout() {
   const token = getToken();
   if (token) { try { await api('logout', { token }); } catch(e){} }
