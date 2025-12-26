@@ -42,6 +42,7 @@ async function api(action, data = {}) {
   return json;
 }
 
+// ====== AUTH STORAGE ======
 function saveToken(t) { localStorage.setItem('ep_token', t); }
 function getToken() { return localStorage.getItem('ep_token'); }
 function clearAuth() {
@@ -49,29 +50,27 @@ function clearAuth() {
   localStorage.removeItem('ep_name');
 }
 
+// ====== API WRAPPERS ======
 async function login(empId, password) {
   const r = await api('login', { empId, password });
   if (r.token) saveToken(r.token);
   if (r.profile && r.profile.Name) localStorage.setItem('ep_name', r.profile.Name);
   return r;
 }
-
 async function fetchMe() {
   const token = getToken();
   if (!token) throw new Error('No token');
   const r = await api('me', { token });
   return r.data;
 }
-
 async function applyLeave(payload) {
   const token = getToken();
   if (!token) throw new Error('No token');
   return api('applyleave', { token, ...payload });
 }
-
 async function logout() {
   const token = getToken();
-  if (token) { try { await api('logout', { token }); } catch (e) {} }
+  if (token) { try { await api('logout', { token }); } catch(e){} }
   clearAuth();
   window.location.href = 'index.html';
 }
