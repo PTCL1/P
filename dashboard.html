@@ -35,9 +35,34 @@
   .success{color:#24d17e}
   .warn{color:#ffb020}
   @media (max-width: 890px) { .grid{grid-template-columns:1fr;} .profile{grid-template-columns:1fr;} }
+
+  /* ===== Loading Overlay ===== */
+  .loadingOverlay{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.55);
+    backdrop-filter: blur(3px);
+    z-index:9999;
+  }
+  .loadingOverlay.hidden{ display:none; }
+  .loadingBox{
+    padding:16px 22px;
+    border:1px solid rgba(255,212,0,.45);
+    background:#14171a;
+    border-radius:14px;
+    color:var(--yellow);
+    font-weight:800;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
 </style>
 </head>
 <body>
+
+<div id="loadingOverlay" class="loadingOverlay hidden" aria-live="polite" aria-busy="true">
+  <div class="loadingBox">..... PLEASE WAIT .....</div>
+</div>
+
 <div class="wrap">
   <div class="topbar">
     <div class="brand">
@@ -83,6 +108,16 @@
   const sectionTitle = document.getElementById('sectionTitle');
   const sectionBody = document.getElementById('sectionBody');
   const placeholderPhoto = 'https://via.placeholder.com/150?text=Photo';
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  function setLoading(on) {
+    loadingOverlay.classList.toggle('hidden', !on);
+    document.querySelectorAll('button').forEach(b => {
+      b.disabled = on;
+      b.style.opacity = on ? '0.6' : '1';
+      b.style.cursor = on ? 'not-allowed' : 'pointer';
+    });
+  }
 
   function esc(v) {
     return String(v ?? '').replace(/[&<>"']/g, (c) => ({
@@ -95,16 +130,41 @@
     return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`;
   }
 
-  function openSection(key) {
-    const titles = {
-      'leave-balance':'Leave Balance',
-      'attendance':'Attendance',
-      'salary':'Salary Slips',
-      'documents':'Documents',
-      'complaints':'Complaints',
-      'bonus':'Bonus',
-      'leaves':'Leave Requests'
+  // ✅ IMPORTANT: GitHub ext fallback (.jpg -> .jpeg -> .png)
+  function setPhotoSrc(raw) {
+    const img = document.getElementById('photo');
+    let base = String(raw || '').trim();
+
+    // non-image data url safety
+    if (base.startsWith('data:') && !base.startsWith('data:image/')) base = '';
+
+    const tries = [];
+    if (base) {
+      tries.push(base);
+
+      // If ends with .jpg -> try .jpeg, .png
+      if (/\.jpg(\?|$)/i.test(base)) {
+        tries.push(base.replace(/\.jpg(\?|$)/i, '.jpeg$1'));
+        tries.push(base.replace(/\.jpg(\?|$)/i, '.png$1'));
+      }
+      // If ends with .jpeg -> try .jpg, .png
+      else if (/\.jpeg(\?|$)/i.test(base)) {
+        tries.push(base.replace(/\.jpeg(\?|$)/i, '.jpg$1'));
+        tries.push(base.replace(/\.jpeg(\?|$)/i, '.png$1'));
+      }
+    }
+    tries.push(placeholderPhoto);
+
+    let i = 0;
+    img.onerror = () => {
+      i++;
+      if (i < tries.length) img.src = tries[i];
     };
+    img.src = tries[i];
+  }
+
+  function openSection(key) {
+    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests'};
     sectionTitle.textContent = titles[key] || 'Details';
 
     const d = window.__DATA__;
@@ -206,21 +266,11 @@
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+esc(e.message||'Failed')+'</div>'; });
   }
 
-  function setPhotoSrc(raw) {
-    const img = document.getElementById('photo');
-    const val = String(raw || '').trim();
-
-    // If server accidentally sends non-image data URL, ignore it
-    let src = val;
-    if (src.startsWith('data:') && !src.startsWith('data:image/')) src = '';
-
-    if (!src) src = placeholderPhoto;
-
-    img.onerror = () => { img.src = placeholderPhoto; };
-    img.src = src;
-  }
-
   async function init() {
+    setLoading(true);
+    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT .....</div>';
+    sectionBody.innerHTML = '<div class="muted">..... PLEASE WAIT .....</div>';
+
     const name = localStorage.getItem('ep_name');
     if (name) document.getElementById('hello').textContent = 'Welcome, ' + String(name).toUpperCase();
 
@@ -230,6 +280,9 @@
 
       const p = d.profile || {};
       document.getElementById('hello').textContent = 'Welcome, ' + String(p.Name || '').toUpperCase();
+
+      // Debug (optional):
+      // console.log('PhotoURL from API:', p.PhotoURL);
 
       setPhotoSrc(p.PhotoURL);
 
@@ -253,9 +306,13 @@
       `;
       document.getElementById('details').innerHTML = details;
 
+      sectionBody.innerHTML = '<div class="muted">Buttons se data dekhiye./ बटन से डाटा देखिए</div>';
+
     } catch (e) {
       alert('Session expired. Please login again.');
       logout();
+    } finally {
+      setLoading(false);
     }
   }
 
