@@ -85,7 +85,7 @@
 
           <div class="btns">
             <button class="btn" onclick="openSection('leave-balance')">Leave Balance</button>
-            <button class="btn primary" onclick="openSection('attendance')">Attendance (Last 32 days)</button>
+            <button class="btn primary" onclick="openSection('attendance')">Attendance (Last 62 days)</button>
             <button class="btn" onclick="openSection('salary')">Salary Slip</button>
             <button class="btn" onclick="openSection('documents')">Documents</button>
             <button class="btn" onclick="openSection('complaints')">Complaints Status</button>
@@ -224,7 +224,7 @@
 
     if (key === 'attendance') {
       const rows = d.attendance || [];
-      const html = rows.slice(-32).slice().reverse().map(r => `
+      const html = rows.slice(-62).slice().reverse().map(r => `
         <tr>
           <td>${esc(r.Date||'')}</td>
           <td>${esc(r.InTime||'')}</td>
