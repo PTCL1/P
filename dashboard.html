@@ -3,251 +3,174 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Employee Dashboard | Soft UI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>Employee Dashboard | Dynamic Profile</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
   :root { 
     --bg: #e0e5ec; 
-    --text: #444; 
+    --text: #333; 
     --yellow: #ffcc00; 
     --shadow-dark: #a3b1c6;
     --shadow-light: #ffffff;
-    --accent: #ff9f43;
   }
   
-  * { box-sizing: border-box; transition: all 0.3s ease; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+  * { box-sizing: border-box; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
   
-  .wrap { max-width: 1000px; margin: 0 auto; padding: 20px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 25px; }
 
-  /* Top Bar */
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
-  .brand { display: flex; align-items: center; gap: 15px; }
-  .logo {
-    width: 65px; height: 65px; border-radius: 50%;
-    background: var(--bg);
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--yellow); font-weight: 800; font-size: 18px;
-  }
-  .logout {
-    background: #ff6b6b; border: none; color: #fff; padding: 12px 20px; border-radius: 12px;
-    box-shadow: 4px 4px 10px rgba(0,0,0,0.1); cursor: pointer; font-weight: 700;
-  }
-
-  .grid { display: grid; grid-template-columns: 350px 1fr; gap: 25px; align-items: start; }
+  /* Top Section Layout */
+  .grid { display: grid; grid-template-columns: 400px 1fr; gap: 30px; align-items: start; }
 
   /* Neumorphic Card */
   .card {
     background: var(--bg);
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
-    margin-bottom: 25px;
+    border-radius: 40px;
+    padding: 30px;
+    box-shadow: 12px 12px 20px var(--shadow-dark), -12px -12px 20px var(--shadow-light);
+    text-align: center;
   }
 
-  /* Profile Section */
-  .photo-wrap { text-align: center; margin-bottom: 20px; }
-  .photo-wrap img {
-    width: 140px; height: 140px; border-radius: 50%;
-    border: 6px solid var(--bg);
-    box-shadow: 8px 8px 15px var(--shadow-dark), -8px -8px 15px var(--shadow-light);
+  /* Profile Photo - Increased Size */
+  .photo-container {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 8px solid var(--bg);
+    box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+    overflow: hidden;
   }
-  .hello { font-size: 22px; font-weight: 800; text-align: center; margin: 10px 0 20px; color: #333; }
+  .photo-container img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* Info Details */
-  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
-  .kv b { color: #666; font-weight: 600; }
-  .kv span { color: #222; font-weight: 700; text-align: right; }
+  .user-name { font-size: 28px; font-weight: 800; margin: 15px 0; letter-spacing: -0.5px; text-transform: uppercase; }
 
-  /* Icon Buttons Grid */
-  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  /* Details Section - Initially Hidden */
+  #details {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(0,0,0,0.05);
+    display: none; /* Default Hidden */
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  #details.active { display: block; opacity: 1; transform: translateY(0); }
+
+  .kv { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 14px; }
+  .kv b { color: #666; }
+  .kv span { font-weight: 800; color: #000; }
+
+  /* Buttons Grid */
+  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   
   .btn {
-    background: var(--bg); border: none; border-radius: 20px; padding: 15px 5px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    background: var(--bg); border: none; border-radius: 25px; padding: 25px 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    cursor: pointer; box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
   }
-  .btn i { font-size: 24px; color: var(--yellow); }
-  .btn span { font-size: 11px; font-weight: 700; color: #555; text-align: center; }
+  .btn i { font-size: 28px; color: var(--yellow); }
+  .btn span { font-size: 13px; font-weight: 700; color: #555; }
   
   .btn:active {
-    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-    transform: scale(0.96);
+    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+    transform: scale(0.95);
   }
 
-  /* Data Display Table Section */
-  #sectionCard { min-height: 200px; }
-  .section-header { font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--accent); border-left: 4px solid var(--yellow); padding-left: 10px; }
-  
-  .tbl-container { overflow-x: auto; border-radius: 15px; background: rgba(255,255,255,0.3); padding: 5px; }
-  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .tbl th { background: rgba(0,0,0,0.05); padding: 12px; text-align: left; color: #444; }
-  .tbl td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: #555; }
-  
-  /* Loading Overlay */
-  .loadingOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99; }
-  .hidden { display: none !important; }
+  /* Right Side Results */
+  .content-area { display: flex; flex-direction: column; gap: 25px; }
+  .result-card { min-height: 200px; text-align: left; }
+  .section-header { font-weight: 800; font-size: 22px; margin-bottom: 20px; color: #ff9f43; }
 
-  @media (max-width: 890px) {
+  @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
-    .btns { grid-template-columns: repeat(3, 1fr); }
+    .btns { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
 
-<div id="loadingOverlay" class="loadingOverlay">
-  <div class="logo" style="width:100px; height:100px; font-size:24px;">PTCL</div>
-</div>
-
 <div class="wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo">PTCL</div>
-      <div style="font-weight:800; font-size:20px;">Dashboard</div>
-    </div>
-    <button class="logout" onclick="logout()">Logout</button>
-  </div>
-
   <div class="grid">
+    
     <div class="card">
-      <div class="photo-wrap">
-        <img id="photo" src="" alt="Profile">
+      <div class="photo-container">
+        <img id="photo" src="" alt="Profile Photo">
       </div>
-      <div class="hello" id="hello">Welcome</div>
+      <div class="user-name" id="userName">Loading...</div>
+      
       <div id="details"></div>
     </div>
 
-    <div class="main-content">
+    <div class="content-area">
       <div class="card">
         <div class="btns">
-          <div class="btn" onclick="openSection('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
-          <div class="btn" onclick="openSection('attendance')"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
-          <div class="btn" onclick="openSection('salary')"><i class="fas fa-file-invoice-dollar"></i><span>Salary</span></div>
-          <div class="btn" onclick="openSection('documents')"><i class="fas fa-file-alt"></i><span>Docs</span></div>
-          <div class="btn" onclick="openSection('complaints')"><i class="fas fa-history"></i><span>Comp. Status</span></div>
-          <div class="btn" onclick="window.location.href='COM.HTML'"><i class="fas fa-pen-nib"></i><span>Comp. Apply</span></div>
-          <div class="btn" onclick="openSection('bonus')"><i class="fas fa-gift"></i><span>Bonus</span></div>
-          <div class="btn" onclick="openSection('leaves')"><i class="fas fa-envelope-open-text"></i><span>Leave Req</span></div>
-          <div class="btn" onclick="showLeaveModal()"><i class="fas fa-plane-departure"></i><span>Leave Apply</span></div>
-          <div class="btn" onclick="openSection('holidays')"><i class="fas fa-umbrella-beach"></i><span>Holidays</span></div>
+          <div class="btn" onclick="handleAction('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
+          <div class="btn" onclick="handleAction('attendance')"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
+          <div class="btn" onclick="handleAction('salary')"><i class="fas fa-file-invoice-dollar"></i><span>Salary</span></div>
+          <div class="btn" onclick="handleAction('documents')"><i class="fas fa-file-alt"></i><span>Docs</span></div>
+          <div class="btn" onclick="handleAction('complaints')"><i class="fas fa-history"></i><span>Comp. Status</span></div>
+          <div class="btn" onclick="handleAction('holidays')"><i class="fas fa-umbrella-beach"></i><span>Holidays</span></div>
         </div>
       </div>
 
-      <div class="card" id="sectionCard">
-        <div id="sectionTitle" class="section-header">Select an option</div>
-        <div id="sectionBody" class="tbl-container">
-          <p style="text-align:center; color:#999; padding:20px;">Click any button above to see details.</p>
-        </div>
+      <div class="card result-card" id="resultCard" style="display:none;">
+        <div id="sectionTitle" class="section-header"></div>
+        <div id="sectionBody"></div>
       </div>
     </div>
+
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  const sectionTitle = document.getElementById('sectionTitle');
-  const sectionBody = document.getElementById('sectionBody');
-  const loadingOverlay = document.getElementById('loadingOverlay');
+  function kv(label, value) { 
+    return `<div class="kv"><b>${label}</b><span>${value || '-'}</span></div>`; 
+  }
 
-  function setLoading(on) { loadingOverlay.classList.toggle('hidden', !on); }
+  // Common Function for Toggle and Data
+  function handleAction(key) {
+    // 1. Show Details Section under Profile
+    const detailsDiv = document.getElementById('details');
+    detailsDiv.classList.add('active');
+    detailsDiv.style.display = 'block';
 
-  function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"' Ancient":'&#39;'}[c])); }
-  function kv(label, value) { return `<div class="kv"><b>${label}</b><span>${value || '-'}</span></div>`; }
+    // 2. Show Result Card on Right
+    document.getElementById('resultCard').style.display = 'block';
 
-  function openSection(key) {
-    const titles = {
-      'leave-balance':'Leave Balance Details',
-      'attendance':'Recent Attendance (62 Days)',
-      'salary':'My Salary Slips',
-      'documents':'Company Documents',
-      'complaints':'Complaint History',
-      'bonus':'Bonus & Incentives',
-      'leaves':'Leave Application Status',
-      'holidays':'Company Holiday List'
-    };
-    
-    sectionTitle.textContent = titles[key] || 'Details';
-    const d = window.__DATA__;
-    if (!d) return;
-
-    let html = '';
-    
-    if (key === 'leave-balance') {
-      const lb = d.leaveBalance || {};
-      html = `<table class="tbl">
-        <tr><th>Category</th><th>Value</th></tr>
-        <tr><td>Total CL</td><td>${lb.TotalCL}</td></tr>
-        <tr><td>Taken CL</td><td>${lb.TakenCL}</td></tr>
-        <tr><td>Balance CL</td><td>${lb.BalanceCL}</td></tr>
-        <tr><td style="border-top:2px solid #ccc">Total EL</td><td>${lb.TotalEL}</td></tr>
-        <tr><td>Balance EL</td><td>${lb.BalanceEL}</td></tr>
-      </table>`;
-    } 
-    else if (key === 'attendance') {
-      const rows = (d.attendance || []).slice(-62).reverse();
-      html = `<table class="tbl">
-        <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th></tr>
-        ${rows.map(r => `<tr><td>${r.Date}</td><td>${r.InTime}</td><td>${r.OutTime}</td><td>${r.Status}</td></tr>`).join('')}
-      </table>`;
+    // 3. Call your existing data loading function
+    if(typeof openSection === "function") {
+        openSection(key);
     }
-    else if (key === 'salary') {
-        const rows = (d.salarySlips || []).reverse();
-        html = `<table class="tbl">
-          <tr><th>Month</th><th>Net Pay</th><th>Action</th></tr>
-          ${rows.map(r => `<tr><td>${r.Month}-${r.Year}</td><td>${r.Net}</td><td><a href="${r.PDFUrl}" target="_blank">View</a></td></tr>`).join('')}
-        </table>`;
-    }
-    else if (key === 'holidays') {
-      const rows = d.holidays || d.Holidays || [];
-      html = `<table class="tbl">
-        <tr><th>Date</th><th>Holiday Name</th><th>Day</th></tr>
-        ${rows.map(r => `<tr><td>${r['Holiday Date(DD-MMM-YY)'] || r.Date}</td><td>${r.Status}</td><td>${r.Days}</td></tr>`).join('')}
-      </table>`;
-    }
-    // generic table for other simple sections
-    else {
-      html = `<p style="padding:20px; text-align:center;">Loading data for ${titles[key]}...</p>`;
-    }
-
-    sectionBody.innerHTML = html || '<p style="padding:20px; text-align:center;">No records found.</p>';
   }
 
   async function init() {
     try {
-      const d = await fetchMe();
+      const d = await fetchMe(); // aapka api call
       window.__DATA__ = d;
       const p = d.profile || {};
       
-      document.getElementById('hello').textContent = p.Name;
-      document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`; 
-      document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/150'; };
+      // Set Large Photo & Name
+      document.getElementById('userName').textContent = p.Name;
+      const img = document.getElementById('photo');
+      img.src = `photos/${p.EmpCode}.jpg`;
+      img.onerror = () => img.src = 'https://via.placeholder.com/220';
 
+      // Prepare details (hidden initially)
       document.getElementById('details').innerHTML = `
-        ${kv('Emp ID', p.EmpID)}
+        ${kv('Emp ID', p.EmpCode)}
         ${kv('Designation', p.Designation)}
         ${kv('Mobile', p.Mobile)}
         ${kv('PF Number', p.PFNumber)}
         ${kv('Joining Date', p.JoiningDate)}
       `;
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+
+    } catch (e) { console.error(e); }
   }
 
   init();
-
-  function logout() { 
-      localStorage.clear(); 
-      window.location.href = 'index.html'; 
-  }
 </script>
 </body>
 </html>
