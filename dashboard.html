@@ -1,12 +1,12 @@
-<!doctype html>
-<html lang="en">
+"<!doctype html>
+<html lang=\"en\">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset=\"utf-8\">
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
 <title>Employee Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
+<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
+<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\">
 <style>
   :root { --bg:#111315; --card:#1a1d20; --text:#eaeaea; --muted:#bcbcbc; --yellow:#ffd400; --danger:#e74c3c; }
   *{box-sizing:border-box}
@@ -26,8 +26,44 @@
   .photo{display:flex;align-items:flex-start;justify-content:center;}
   .photo img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid var(--yellow);box-shadow:0 0 22px rgba(255,212,0,.4);background:#0f0f0f;}
   .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
-  .btn{padding:12px;border-radius:12px;border:1px solid var(--yellow);background:transparent;color:var(--yellow);font-weight:800;cursor:pointer;}
+  
+  /* ✅ Updated button styles with icons */
+  .btn{
+    padding:12px 10px;
+    border-radius:12px;
+    border:1px solid var(--yellow);
+    background:transparent;
+    color:var(--yellow);
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    transition:all 0.3s ease;
+    position:relative;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(255,212,0,.3);
+  }
   .btn.primary{background:var(--yellow);color:#000;}
+  .btn.primary:hover{
+    background:#ffdd33;
+    box-shadow:0 6px 16px rgba(255,212,0,.5);
+  }
+  
+  /* Icon styles */
+  .btn-icon{
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+  }
+  
   .tbl{width:100%;border-collapse:collapse;font-size:14px;}
   .tbl th,.tbl td{border-bottom:1px dashed rgba(255,212,0,.3);padding:8px 6px;text-align:left;vertical-align:top;}
   .tbl th{color:var(--yellow);}
@@ -60,56 +96,94 @@
 </head>
 <body>
 
-<div id="loadingOverlay" class="loadingOverlay hidden" aria-live="polite" aria-busy="true">
-  <div class="loadingBox">..... PLEASE WAIT .....</div>
+<div id=\"loadingOverlay\" class=\"loadingOverlay hidden\" aria-live=\"polite\" aria-busy=\"true\">
+  <div class=\"loadingBox\">..... PLEASE WAIT .....</div>
 </div>
 
-<div class="wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo">PTCL</div>
-      <div class="title">Employee Portal</div>
+<div class=\"wrap\">
+  <div class=\"topbar\">
+    <div class=\"brand\">
+      <div class=\"logo\">PTCL</div>
+      <div class=\"title\">Employee Portal</div>
     </div>
-    <button class="logout" onclick="logout()">Logout</button>
+    <button class=\"logout\" onclick=\"logout()\">Logout</button>
   </div>
 
-  <div class="grid">
-    <div class="card" id="profileCard">
-      <div class="hello" id="hello">Welcome</div>
-      <div class="profile">
-        <div id="details"></div>
+  <div class=\"grid\">
+    <div class=\"card\" id=\"profileCard\">
+      <div class=\"hello\" id=\"hello\">Welcome</div>
+      <div class=\"profile\">
+        <div id=\"details\"></div>
         <div>
-          <div class="photo">
-            <img id="photo" src="" alt="photo" loading="lazy">
+          <div class=\"photo\">
+            <img id=\"photo\" src=\"\" alt=\"photo\" loading=\"lazy\">
           </div>
 
-          <div class="btns">
-            <button class="btn" onclick="openSection('leave-balance')">Leave Balance</button>
-            <button class="btn primary" onclick="openSection('attendance')">Attendance (Last 62 days)</button>
-            <button class="btn" onclick="openSection('salary')">Salary Slip</button>
-            <button class="btn" onclick="openSection('documents')">Documents</button>
-            <button class="btn" onclick="openSection('complaints')">Complaints Status</button>
-            <button class="btn" onclick="window.location.href='COM.HTML'">Complaint Apply</button>
-            <button class="btn" onclick="openSection('bonus')">Bonus</button>
-            <button class="btn" onclick="openSection('leaves')">Leave Status</button>
+          <div class=\"btns\">
+            <!-- ✅ Buttons with Icons -->
+            <button class=\"btn\" onclick=\"openSection('leave-balance')\">
+              <div class=\"btn-icon\">🏖️</div>
+              <span>Leave Balance</span>
+            </button>
+            
+            <button class=\"btn primary\" onclick=\"openSection('attendance')\">
+              <div class=\"btn-icon\">📅</div>
+              <span>Attendance<br>(Last 62 days)</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('salary')\">
+              <div class=\"btn-icon\">💰</div>
+              <span>Salary Slip</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('documents')\">
+              <div class=\"btn-icon\">📄</div>
+              <span>Documents</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('complaints')\">
+              <div class=\"btn-icon\">📋</div>
+              <span>Complaints Status</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"window.location.href='COM.HTML'\">
+              <div class=\"btn-icon\">✍️</div>
+              <span>Complaint Apply</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('bonus')\">
+              <div class=\"btn-icon\">🎁</div>
+              <span>Bonus</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('leaves')\">
+              <div class=\"btn-icon\">📊</div>
+              <span>Leave Status</span>
+            </button>
 
-            <button class="btn" onclick="showLeaveModal()">Leave Apply</button>
-            <!-- ✅ Holiday List button updated -->
-            <button class="btn" onclick="openSection('holidays')">Holiday List</button>
+            <button class=\"btn\" onclick=\"showLeaveModal()\">
+              <div class=\"btn-icon\">✈️</div>
+              <span>Leave Apply</span>
+            </button>
+            
+            <button class=\"btn\" onclick=\"openSection('holidays')\">
+              <div class=\"btn-icon\">🎉</div>
+              <span>Holiday List</span>
+            </button>
           </div>
 
         </div>
       </div>
     </div>
 
-    <div class="card" id="sectionCard">
-      <div id="sectionTitle" class="hello" style="font-size:20px;margin-bottom:4px;">Select an option</div>
-      <div id="sectionBody" class="muted">Buttons se data dekhiye./ बटन से डाटा देखिए</div>
+    <div class=\"card\" id=\"sectionCard\">
+      <div id=\"sectionTitle\" class=\"hello\" style=\"font-size:20px;margin-bottom:4px;\">Select an option</div>
+      <div id=\"sectionBody\" class=\"muted\">Buttons se data dekhiye./ बटन से डाटा देखिए</div>
     </div>
   </div>
 </div>
 
-<script src="app.js"></script>
+<script src=\"app.js\"></script>
 <script>
   const sectionTitle = document.getElementById('sectionTitle');
   const sectionBody = document.getElementById('sectionBody');
@@ -117,11 +191,11 @@
 
   // Inline placeholder (no dependency)
   const placeholderPhoto =
-    "data:image/svg+xml;charset=UTF-8," +
-    encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150">
-      <rect width="100%" height="100%" fill="#0f0f0f"/>
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-        fill="#ffd400" font-family="Inter, Arial" font-size="16" font-weight="700">PHOTO</text>
+    \"data:image/svg+xml;charset=UTF-8,\" +
+    encodeURIComponent(`<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"150\">
+      <rect width=\"100%\" height=\"100%\" fill=\"#0f0f0f\"/>
+      <text x=\"50%\" y=\"50%\" dominant-baseline=\"middle\" text-anchor=\"middle\"
+        fill=\"#ffd400\" font-family=\"Inter, Arial\" font-size=\"16\" font-weight=\"700\">PHOTO</text>
     </svg>`);
 
   // If your site is NOT on GitHub Pages, set RAW_GITHUB_BASE (optional)
@@ -133,14 +207,14 @@
   }
 
   function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, (c) => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    return String(v ?? '').replace(/[&<>\"']/g, (c) => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'
     }[c]));
   }
   function escAttr(v) { return esc(v).replace(/`/g, '&#96;'); }
 
   function kv(label, value) {
-    return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`;
+    return `<div class=\"kv\"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`;
   }
 
   function photoCandidatesByCode(code) {
@@ -192,19 +266,19 @@
       'complaints':'Complaints',
       'bonus':'Bonus',
       'leaves':'Leave Requests',
-      'holidays':'Holidays'   // ✅ Tab name/title = Holidays
+      'holidays':'Holidays'
     };
     sectionTitle.textContent = titles[key] || 'Details';
 
     const d = window.__DATA__;
     if (!d) {
-      sectionBody.innerHTML = '<div class="warn">Data not loaded. Please refresh.</div>';
+      sectionBody.innerHTML = '<div class=\"warn\">Data not loaded. Please refresh.</div>';
       return;
     }
 
     if (key === 'leave-balance') {
       const lb = d.leaveBalance || {};
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr>
           <th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th>
           <th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th>
@@ -233,9 +307,9 @@
           <td>${esc(r.Remarks||'')}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
+        ${html || '<tr><td colspan=\"5\" class=\"muted\">No records</td></tr>'}
       </table>`;
       return;
     }
@@ -248,12 +322,12 @@
           <td>${esc(r.Gross||'')}</td>
           <td>${esc(r.Deductions||'')}</td>
           <td>${esc(r.Net||'')}</td>
-          <td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank" rel="noopener">View PDF</a>` : '-'}</td>
+          <td>${r.PDFUrl ? `<a href=\"${escAttr(r.PDFUrl)}\" target=\"_blank\" rel=\"noopener\">View PDF</a>` : '-'}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No salary slips</td></tr>'}
+        ${html || '<tr><td colspan=\"5\" class=\"muted\">No salary slips</td></tr>'}
       </table>`;
       return;
     }
@@ -264,12 +338,12 @@
         <tr>
           <td>${esc(r.Type||'')}</td>
           <td>${esc(r.Name||'')}</td>
-          <td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank" rel="noopener">Open</a>` : '-'}</td>
+          <td>${r.FileUrl ? `<a href=\"${escAttr(r.FileUrl)}\" target=\"_blank\" rel=\"noopener\">Open</a>` : '-'}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>Type</th><th>Name</th><th>Link</th></tr>
-        ${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}
+        ${html || '<tr><td colspan=\"3\" class=\"muted\">No documents</td></tr>'}
       </table>`;
       return;
     }
@@ -285,9 +359,9 @@
           <td>${esc(r.Response||'')}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>Date</th><th>Subject</th><th>Description</th><th>Status</th><th>Response</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}
+        ${html || '<tr><td colspan=\"5\" class=\"muted\">No complaints</td></tr>'}
       </table>`;
       return;
     }
@@ -301,9 +375,9 @@
           <td>${esc(r.Notes||'')}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>Date</th><th>Amount</th><th>Notes</th></tr>
-        ${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}
+        ${html || '<tr><td colspan=\"3\" class=\"muted\">No bonus</td></tr>'}
       </table>`;
       return;
     }
@@ -319,19 +393,14 @@
           <td>${esc(r.Status||'')}</td>
         </tr>
       `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}
+        ${html || '<tr><td colspan=\"5\" class=\"muted\">No leave requests</td></tr>'}
       </table>`;
       return;
     }
 
-    /* ✅ Holidays section (Tab name: "Holidays")
-       Headings:
-       "Month (MMM-YY)", "Holiday Date(DD-MMM-YY)", Status, Days
-    */
     if (key === 'holidays') {
-      // Support both: d.holidays OR d.Holidays (as per your tab name)
       const rows = d.holidays || d.Holidays || [];
 
       const html = rows.map(r => `
@@ -343,19 +412,19 @@
         </tr>
       `).join('');
 
-      sectionBody.innerHTML = `<table class="tbl">
+      sectionBody.innerHTML = `<table class=\"tbl\">
         <tr>
           <th>Month (MMM-YY)</th>
           <th>Holiday Date(DD-MMM-YY)</th>
           <th>Status</th>
           <th>Days</th>
         </tr>
-        ${html || '<tr><td colspan="4" class="muted">No holidays</td></tr>'}
+        ${html || '<tr><td colspan=\"4\" class=\"muted\">No holidays</td></tr>'}
       </table>`;
       return;
     }
 
-    sectionBody.innerHTML = '<div class="muted">No view for this section.</div>';
+    sectionBody.innerHTML = '<div class=\"muted\">No view for this section.</div>';
   }
 
   function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
@@ -365,30 +434,30 @@
     const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
 
     if (!isISODate(fromDate) || !isISODate(toDate)) {
-      sectionBody.innerHTML = '<div class="warn">Invalid date format. Use YYYY-MM-DD</div>';
+      sectionBody.innerHTML = '<div class=\"warn\">Invalid date format. Use YYYY-MM-DD</div>';
       return;
     }
     if (toDate < fromDate) {
-      sectionBody.innerHTML = '<div class="warn">To date cannot be before From date.</div>';
+      sectionBody.innerHTML = '<div class=\"warn\">To date cannot be before From date.</div>';
       return;
     }
 
     const type = prompt('Type (Full/Half/SL):','Full') || 'Full';
     const reason = prompt('Reason:') || '';
 
-    sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
+    sectionBody.innerHTML = '<div class=\"muted\">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
       .then(async ()=>{
-        sectionBody.innerHTML='<div class="success">Leave request submitted.</div>';
+        sectionBody.innerHTML='<div class=\"success\">Leave request submitted.</div>';
         await init();
         openSection('leaves');
       })
-      .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+esc(e.message||'Failed')+'</div>'; });
+      .catch(e=>{ sectionBody.innerHTML='<div class=\"warn\">'+esc(e.message||'Failed')+'</div>'; });
   }
 
   async function init() {
     setLoading(true);
-    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT .....</div>';
+    document.getElementById('details').innerHTML = '<div class=\"muted\">..... PLEASE WAIT .....</div>';
 
     try {
       const d = await fetchMe();
@@ -404,7 +473,7 @@
         ${kv('Employee ID', p.EmpID)}
         ${kv('Emp Code', p.EmpCode)}
         ${kv('Designation', p.Designation)}
-        ${kv("Father's Name", p.FatherName)}
+        ${kv(\"Father's Name\", p.FatherName)}
         ${kv('Gender', p.Gender)}
         ${kv('ESIC Number', p.ESICNumber)}
         ${kv('PF Number', p.PFNumber)}
@@ -432,3 +501,4 @@
 </script>
 </body>
 </html>
+"
