@@ -3,173 +3,142 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Employee Dashboard | Dynamic Profile</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<title>Employee Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-  :root { 
-    --bg: #e0e5ec; 
-    --text: #333; 
-    --yellow: #ffcc00; 
-    --shadow-dark: #a3b1c6;
-    --shadow-light: #ffffff;
-  }
-  
-  * { box-sizing: border-box; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
-  
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 25px; }
+  :root { --bg: #e0e5ec; --text: #333; --yellow: #ffcc00; --shadow-dark: #a3b1c6; --shadow-light: #ffffff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-  /* Top Section Layout */
-  .grid { display: grid; grid-template-columns: 400px 1fr; gap: 30px; align-items: start; }
+  /* Grid Layout */
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
 
   /* Neumorphic Card */
   .card {
-    background: var(--bg);
-    border-radius: 40px;
-    padding: 30px;
-    box-shadow: 12px 12px 20px var(--shadow-dark), -12px -12px 20px var(--shadow-light);
-    text-align: center;
-  }
-
-  /* Profile Photo - Increased Size */
-  .photo-container {
-    width: 220px;
-    height: 220px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    border: 8px solid var(--bg);
+    background: var(--bg); border-radius: 35px; padding: 25px;
     box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-    overflow: hidden;
+    text-align: center; margin-bottom: 20px;
   }
-  .photo-container img { width: 100%; height: 100%; object-fit: cover; }
 
-  .user-name { font-size: 28px; font-weight: 800; margin: 15px 0; letter-spacing: -0.5px; text-transform: uppercase; }
-
-  /* Details Section - Initially Hidden */
-  #details {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid rgba(0,0,0,0.05);
-    display: none; /* Default Hidden */
-    opacity: 0;
-    transform: translateY(20px);
+  /* Profile Image - Large Size */
+  .photo-box {
+    width: 200px; height: 200px; margin: 0 auto 15px; border-radius: 50%;
+    border: 6px solid var(--bg); overflow: hidden;
+    box-shadow: 8px 8px 15px var(--shadow-dark), -8px -8px 15px var(--shadow-light);
   }
-  #details.active { display: block; opacity: 1; transform: translateY(0); }
+  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
 
-  .kv { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 14px; }
-  .kv b { color: #666; }
-  .kv span { font-weight: 800; color: #000; }
+  /* Hidden Details */
+  #details { display: none; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px; }
+  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 14px; }
+  .kv b { color: #666; } .kv span { font-weight: 700; }
 
-  /* Buttons Grid */
-  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  
+  /* Fast Icon Buttons */
+  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .btn {
-    background: var(--bg); border: none; border-radius: 25px; padding: 25px 10px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-    cursor: pointer; box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+    background: var(--bg); border: none; border-radius: 20px; padding: 20px 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
   }
-  .btn i { font-size: 28px; color: var(--yellow); }
-  .btn span { font-size: 13px; font-weight: 700; color: #555; }
+  .btn i { font-size: 24px; color: var(--yellow); }
+  .btn span { font-size: 12px; font-weight: 700; color: #555; }
+  .btn:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+
+  /* Data Table */
+  .tbl { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  .tbl th, .tbl td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
   
-  .btn:active {
-    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    transform: scale(0.95);
-  }
-
-  /* Right Side Results */
-  .content-area { display: flex; flex-direction: column; gap: 25px; }
-  .result-card { min-height: 200px; text-align: left; }
-  .section-header { font-weight: 800; font-size: 22px; margin-bottom: 20px; color: #ff9f43; }
-
-  @media (max-width: 900px) {
-    .grid { grid-template-columns: 1fr; }
-    .btns { grid-template-columns: repeat(2, 1fr); }
-  }
+  .loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99; font-weight: 800; }
+  .hidden { display: none !important; }
+  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
+<div id="loader" class="loading">LOADING...</div>
+
 <div class="wrap">
   <div class="grid">
-    
     <div class="card">
-      <div class="photo-container">
-        <img id="photo" src="" alt="Profile Photo">
-      </div>
-      <div class="user-name" id="userName">Loading...</div>
-      
-      <div id="details"></div>
-    </div>
+      <div class="photo-box"><img id="u_img" src="" alt="User"></div>
+      <div class="user-name" id="u_name">Employee</div>
+      <div id="details"></div> </div>
 
-    <div class="content-area">
+    <div class="main">
       <div class="card">
         <div class="btns">
-          <div class="btn" onclick="handleAction('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
-          <div class="btn" onclick="handleAction('attendance')"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
-          <div class="btn" onclick="handleAction('salary')"><i class="fas fa-file-invoice-dollar"></i><span>Salary</span></div>
-          <div class="btn" onclick="handleAction('documents')"><i class="fas fa-file-alt"></i><span>Docs</span></div>
-          <div class="btn" onclick="handleAction('complaints')"><i class="fas fa-history"></i><span>Comp. Status</span></div>
-          <div class="btn" onclick="handleAction('holidays')"><i class="fas fa-umbrella-beach"></i><span>Holidays</span></div>
+          <div class="btn" onclick="showData('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
+          <div class="btn" onclick="showData('attendance')"><i class="fas fa-clock"></i><span>Attendance</span></div>
+          <div class="btn" onclick="showData('salary')"><i class="fas fa-money-check-alt"></i><span>Salary</span></div>
+          <div class="btn" onclick="showData('documents')"><i class="fas fa-file-pdf"></i><span>Docs</span></div>
+          <div class="btn" onclick="showData('complaints')"><i class="fas fa-headset"></i><span>Status</span></div>
+          <div class="btn" onclick="showData('holidays')"><i class="fas fa-sun"></i><span>Holidays</span></div>
         </div>
       </div>
 
-      <div class="card result-card" id="resultCard" style="display:none;">
-        <div id="sectionTitle" class="section-header"></div>
-        <div id="sectionBody"></div>
+      <div class="card" id="res_card" style="display:none; text-align:left;">
+        <h3 id="res_title" style="color:var(--yellow); margin-top:0;">Details</h3>
+        <div id="res_body"></div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  function kv(label, value) { 
-    return `<div class="kv"><b>${label}</b><span>${value || '-'}</span></div>`; 
+  function kv(l, v) { return `<div class="kv"><b>${l}:</b><span>${v || '-'}</span></div>`; }
+
+  function showData(key) {
+    // 1. Show Profile Details
+    document.getElementById('details').style.display = 'block';
+    // 2. Show Table Card
+    document.getElementById('res_card').style.display = 'block';
+    // 3. Run Section Logic
+    openSection(key); 
   }
 
-  // Common Function for Toggle and Data
-  function handleAction(key) {
-    // 1. Show Details Section under Profile
-    const detailsDiv = document.getElementById('details');
-    detailsDiv.classList.add('active');
-    detailsDiv.style.display = 'block';
-
-    // 2. Show Result Card on Right
-    document.getElementById('resultCard').style.display = 'block';
-
-    // 3. Call your existing data loading function
-    if(typeof openSection === "function") {
-        openSection(key);
+  // Override openSection to keep it fast
+  function openSection(key) {
+    const d = window.__DATA__;
+    const body = document.getElementById('res_body');
+    const title = document.getElementById('res_title');
+    
+    if(!d) return;
+    
+    if(key === 'attendance') {
+      title.innerText = "Attendance History";
+      let rows = (d.attendance || []).slice(-30).reverse();
+      body.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Status</th></tr>${rows.map(r=>`<tr><td>${r.Date}</td><td>${r.Status}</td></tr>`).join('')}</table>`;
+    } 
+    else if(key === 'leave-balance') {
+      title.innerText = "Leave Balance";
+      let lb = d.leaveBalance || {};
+      body.innerHTML = `<div style="padding:10px;">${kv('CL Balance', lb.BalanceCL)}${kv('EL Balance', lb.BalanceEL)}</div>`;
+    }
+    else {
+      body.innerHTML = `<p style="padding:10px;">Data loading for ${key}...</p>`;
     }
   }
 
   async function init() {
     try {
-      const d = await fetchMe(); // aapka api call
+      const d = await fetchMe();
       window.__DATA__ = d;
       const p = d.profile || {};
-      
-      // Set Large Photo & Name
-      document.getElementById('userName').textContent = p.Name;
-      const img = document.getElementById('photo');
-      img.src = `photos/${p.EmpCode}.jpg`;
-      img.onerror = () => img.src = 'https://via.placeholder.com/220';
-
-      // Prepare details (hidden initially)
+      document.getElementById('u_name').innerText = p.Name;
+      document.getElementById('u_img').src = `photos/${p.EmpCode}.jpg`;
       document.getElementById('details').innerHTML = `
         ${kv('Emp ID', p.EmpCode)}
-        ${kv('Designation', p.Designation)}
         ${kv('Mobile', p.Mobile)}
-        ${kv('PF Number', p.PFNumber)}
-        ${kv('Joining Date', p.JoiningDate)}
+        ${kv('Joining', p.JoiningDate)}
       `;
-
-    } catch (e) { console.error(e); }
+    } catch(e) { console.log(e); }
+    document.getElementById('loader').classList.add('hidden');
   }
-
   init();
 </script>
 </body>
