@@ -1,519 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR Dashboard</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Employee Dashboard | Soft UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Google Fonts & Font Awesome for Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root { 
+    --bg: #e0e5ec; 
+    --text: #444; 
+    --yellow: #ffcc00; 
+    --shadow-dark: #a3b1c6;
+    --shadow-light: #ffffff;
+    --accent: #ff9f43;
+  }
+  
+  * { box-sizing: border-box; transition: all 0.3s ease; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+  
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 20px; }
 
-  <style>
-    :root {
-      --bg-dark: #121212;
-      --card-bg: #1e1e1e;
-      --accent-yellow: #FFD700;
-      --text-main: #FFFFFF;
-      --text-muted: #888888;
-    }
+  /* Top Bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+  .brand { display: flex; align-items: center; gap: 15px; }
+  .logo {
+    width: 65px; height: 65px; border-radius: 50%;
+    background: var(--bg);
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--yellow); font-weight: 800; font-size: 18px;
+  }
+  .logout {
+    background: #ff6b6b; border: none; color: #fff; padding: 12px 20px; border-radius: 12px;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.1); cursor: pointer; font-weight: 700;
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  .grid { display: grid; grid-template-columns: 350px 1fr; gap: 25px; align-items: start; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      padding-bottom: 30px;
-    }
+  /* Neumorphic Card */
+  .card {
+    background: var(--bg);
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
+    margin-bottom: 25px;
+  }
 
-    /* Header Profile Section */
-    .header {
-      background-color: #000;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border-bottom: 2px solid var(--accent-yellow);
-      margin-bottom: 20px;
-    }
+  /* Profile Section */
+  .photo-wrap { text-align: center; margin-bottom: 20px; }
+  .photo-wrap img {
+    width: 140px; height: 140px; border-radius: 50%;
+    border: 6px solid var(--bg);
+    box-shadow: 8px 8px 15px var(--shadow-dark), -8px -8px 15px var(--shadow-light);
+  }
+  .hello { font-size: 22px; font-weight: 800; text-align: center; margin: 10px 0 20px; color: #333; }
 
-    .profile-img-container {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 3px solid var(--accent-yellow);
-      overflow: hidden;
-      margin-bottom: 10px;
-      box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
-    }
+  /* Info Details */
+  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
+  .kv b { color: #666; font-weight: 600; }
+  .kv span { color: #222; font-weight: 700; text-align: right; }
 
-    .profile-img-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  /* Icon Buttons Grid */
+  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  
+  .btn {
+    background: var(--bg); border: none; border-radius: 20px; padding: 15px 5px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
+  .btn i { font-size: 24px; color: var(--yellow); }
+  .btn span { font-size: 11px; font-weight: 700; color: #555; text-align: center; }
+  
+  .btn:active {
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+    transform: scale(0.96);
+  }
 
-    #hello {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent-yellow);
-      text-transform: uppercase;
-    }
+  /* Data Display Table Section */
+  #sectionCard { min-height: 200px; }
+  .section-header { font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--accent); border-left: 4px solid var(--yellow); padding-left: 10px; }
+  
+  .tbl-container { overflow-x: auto; border-radius: 15px; background: rgba(255,255,255,0.3); padding: 5px; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { background: rgba(0,0,0,0.05); padding: 12px; text-align: left; color: #444; }
+  .tbl td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: #555; }
+  
+  /* Loading Overlay */
+  .loadingOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99; }
+  .hidden { display: none !important; }
 
-    /* 2-Column Responsive Grid Like Image 2 with Image 1 Card Style */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      padding: 15px;
-    }
-
-    .menu-item {
-      background: var(--card-bg);
-      border: 1.5px solid var(--accent-yellow);
-      border-radius: 16px; /* Rounded corners from image 1 */
-      padding: 20px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Soft Shadow */
-    }
-
-    .menu-item:active {
-      transform: scale(0.95);
-    }
-
-    /* Icon box for each button */
-    .icon-box {
-      width: 55px;
-      height: 55px;
-      background: #2a2a2a;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-    }
-
-    .icon-box i {
-      font-size: 24px;
-      color: var(--accent-yellow);
-    }
-
-    .menu-item span {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--accent-yellow);
-      text-align: center;
-    }
-
-    /* Dynamic Content Display Area */
-    .content-area {
-      margin: 15px;
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 15px;
-      border: 1px solid #333;
-    }
-
-    .section-title {
-      font-size: 16px;
-      color: var(--accent-yellow);
-      margin-bottom: 15px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    /* Table Styles (As per your design) */
-    .tbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .tbl th, .tbl td {
-      border: 1px solid #333;
-      padding: 10px;
-      text-align: left;
-    }
-
-    .tbl th {
-      background-color: var(--accent-yellow);
-      color: #000;
-      font-weight: bold;
-    }
-
-    .tbl td {
-      color: var(--text-main);
-    }
-
-    /* Profile details style */
-    .kv-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #2a2a2a;
-      font-size: 14px;
-    }
-
-    .kv-key {
-      color: var(--text-muted);
-    }
-
-    .kv-val {
-      color: var(--accent-yellow);
-      font-weight: 600;
-    }
-
-    /* Helper classes */
-    .muted { color: var(--text-muted); text-align: center; padding: 15px; }
-    .warn { color: #ff4d4d; text-align: center; padding: 15px; }
-    .success { color: #4CAF50; text-align: center; padding: 15px; }
-    
-    .logout-btn {
-      display: block;
-      width: 90%;
-      margin: 20px auto;
-      background: #e63946;
-      color: #fff;
-      text-align: center;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+  @media (max-width: 890px) {
+    .grid { grid-template-columns: 1fr; }
+    .btns { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Header Section -->
-  <div class="header">
-    <div class="profile-img-container">
-      <img id="profilePhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile">
+<div id="loadingOverlay" class="loadingOverlay">
+  <div class="logo" style="width:100px; height:100px; font-size:24px;">PTCL</div>
+</div>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">PTCL</div>
+      <div style="font-weight:800; font-size:20px;">Dashboard</div>
     </div>
-    <div id="hello">Welcome, User</div>
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Main Menu Grid (Buttons with Icons, style inspired from Image 1 but colors of Image 2) -->
-  <div class="menu-grid">
-    
-    <div class="menu-item" onclick="openSection('leave-balance')">
-      <div class="icon-box"><i class="fa-solid fa-scale-balanced"></i></div>
-      <span>Leave Balance</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('attendance')">
-      <div class="icon-box"><i class="fa-solid fa-calendar-check"></i></div>
-      <span>Attendance</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('salary')">
-      <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-      <span>Salary Slip</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('documents')">
-      <div class="icon-box"><i class="fa-solid fa-folder-open"></i></div>
-      <span>Documents</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('complaints')">
-      <div class="icon-box"><i class="fa-solid fa-clipboard-list"></i></div>
-      <span>Complaints Status</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('complaint-apply')">
-      <div class="icon-box"><i class="fa-solid fa-pen-to-square"></i></div>
-      <span>Complaint Apply</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('bonus')">
-      <div class="icon-box"><i class="fa-solid fa-gift"></i></div>
-      <span>Bonus</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('leaves')">
-      <div class="icon-box"><i class="fa-solid fa-hourglass-half"></i></div>
-      <span>Leave Status</span>
-    </div>
-
-    <div class="menu-item" onclick="showLeaveModal()">
-      <div class="icon-box"><i class="fa-solid fa-paper-plane"></i></div>
-      <span>Leave Apply</span>
-    </div>
-
-    <div class="menu-item" onclick="openSection('holidays')">
-      <div class="icon-box"><i class="fa-solid fa-umbrella-beach"></i></div>
-      <span>Holiday List</span>
-    </div>
-
-  </div>
-
-  <!-- Dynamic Content Area -->
-  <div class="content-area" id="dynamicArea">
-    <div class="section-title" id="sectionTitle">Profile Info</div>
-    <div id="sectionBody">
+  <div class="grid">
+    <div class="card">
+      <div class="photo-wrap">
+        <img id="photo" src="" alt="Profile">
+      </div>
+      <div class="hello" id="hello">Welcome</div>
       <div id="details"></div>
     </div>
+
+    <div class="main-content">
+      <div class="card">
+        <div class="btns">
+          <div class="btn" onclick="openSection('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
+          <div class="btn" onclick="openSection('attendance')"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
+          <div class="btn" onclick="openSection('salary')"><i class="fas fa-file-invoice-dollar"></i><span>Salary</span></div>
+          <div class="btn" onclick="openSection('documents')"><i class="fas fa-file-alt"></i><span>Docs</span></div>
+          <div class="btn" onclick="openSection('complaints')"><i class="fas fa-history"></i><span>Comp. Status</span></div>
+          <div class="btn" onclick="window.location.href='COM.HTML'"><i class="fas fa-pen-nib"></i><span>Comp. Apply</span></div>
+          <div class="btn" onclick="openSection('bonus')"><i class="fas fa-gift"></i><span>Bonus</span></div>
+          <div class="btn" onclick="openSection('leaves')"><i class="fas fa-envelope-open-text"></i><span>Leave Req</span></div>
+          <div class="btn" onclick="showLeaveModal()"><i class="fas fa-plane-departure"></i><span>Leave Apply</span></div>
+          <div class="btn" onclick="openSection('holidays')"><i class="fas fa-umbrella-beach"></i><span>Holidays</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="sectionCard">
+        <div id="sectionTitle" class="section-header">Select an option</div>
+        <div id="sectionBody" class="tbl-container">
+          <p style="text-align:center; color:#999; padding:20px;">Click any button above to see details.</p>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <button class="logout-btn" onclick="logout()">LOGOUT</button>
-
-
+<script src="app.js"></script>
 <script>
-  // Utility escaping functions
-  function esc(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>"']/g, function (m) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-    });
-  }
+  const sectionTitle = document.getElementById('sectionTitle');
+  const sectionBody = document.getElementById('sectionBody');
+  const loadingOverlay = document.getElementById('loadingOverlay');
 
-  function escAttr(str) {
-    return esc(str);
-  }
+  function setLoading(on) { loadingOverlay.classList.toggle('hidden', !on); }
 
-  function pick(obj, keys, def) {
-    if (!obj) return def;
-    for (let k of keys) {
-      if (obj[k] !== undefined) return obj[k];
-    }
-    return def;
-  }
+  function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"' Ancient":'&#39;'}[c])); }
+  function kv(label, value) { return `<div class="kv"><b>${label}</b><span>${value || '-'}</span></div>`; }
 
-  function kv(key, val) {
-    return `<div class="kv-row"><span class="kv-key">${esc(key)}</span><span class="kv-val">${esc(val || '-')}</span></div>`;
-  }
-
-  // Set photo based on employee code
-  function setPhotoByEmpCode(empCode) {
-    if (empCode) {
-      // replace with your actual URL structure if needed
-      document.getElementById('profilePhoto').src = `/photos/${empCode}.jpg`; 
-    }
-  }
-
-  function setLoading(bool) {
-    // You can implement screen loaders here
-  }
-
-  function logout() {
-    alert("Logging out...");
-    // window.location.href = 'login.html';
-  }
-
-  // Placeholder functions for fetch and apply leave (should map to your actual APIs)
-  async function fetchMe() {
-    // Assuming this returns data from your sheets or backend
-    return window.__DATA__ || { profile: { Name: 'Dummy User', EmpCode: 'E123' }, documents: [], complaints: [] };
-  }
-
-  async function applyLeave(data) {
-    console.log("Applying Leave: ", data);
-    return true;
-  }
-
-  // Global handler for sections
   function openSection(key) {
-    const d = window.__DATA__ || {};
-    const sectionBody = document.getElementById('sectionBody');
-    const sectionTitle = document.getElementById('sectionTitle');
+    const titles = {
+      'leave-balance':'Leave Balance Details',
+      'attendance':'Recent Attendance (62 Days)',
+      'salary':'My Salary Slips',
+      'documents':'Company Documents',
+      'complaints':'Complaint History',
+      'bonus':'Bonus & Incentives',
+      'leaves':'Leave Application Status',
+      'holidays':'Company Holiday List'
+    };
+    
+    sectionTitle.textContent = titles[key] || 'Details';
+    const d = window.__DATA__;
+    if (!d) return;
 
-    sectionTitle.textContent = key.toUpperCase().replace('-', ' ');
-
+    let html = '';
+    
     if (key === 'leave-balance') {
-      sectionBody.innerHTML = '<div class="muted">No leave balance data available.</div>';
-      return;
-    }
-    if (key === 'attendance') {
-      sectionBody.innerHTML = '<div class="muted">No attendance data available.</div>';
-      return;
-    }
-    if (key === 'salary') {
-      sectionBody.innerHTML = '<div class="muted">Salary slip system under maintenance.</div>';
-      return;
-    }
-    if (key === 'complaint-apply') {
-      sectionBody.innerHTML = '<div class="muted">Complaint form under construction.</div>';
-      return;
-    }
-
-    if (key === 'documents') {
-      const rows = d.documents || [];
-      const html = rows.map(r => `
-        <tr>
-          <td>${esc(r.Type||'')}</td>
-          <td>${esc(r.Name||'')}</td>
-          <td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank" rel="noopener" style="color:#FFD700;">Open</a>` : '-'}</td>
-        </tr>
-      `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
-        <tr><th>Type</th><th>Name</th><th>Link</th></tr>
-        ${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}
+      const lb = d.leaveBalance || {};
+      html = `<table class="tbl">
+        <tr><th>Category</th><th>Value</th></tr>
+        <tr><td>Total CL</td><td>${lb.TotalCL}</td></tr>
+        <tr><td>Taken CL</td><td>${lb.TakenCL}</td></tr>
+        <tr><td>Balance CL</td><td>${lb.BalanceCL}</td></tr>
+        <tr><td style="border-top:2px solid #ccc">Total EL</td><td>${lb.TotalEL}</td></tr>
+        <tr><td>Balance EL</td><td>${lb.BalanceEL}</td></tr>
       </table>`;
-      return;
-    }
-
-    if (key === 'complaints') {
-      const rows = d.complaints || [];
-      const html = rows.slice().reverse().map(r => `
-        <tr>
-          <td>${esc(r.Date||'')}</td>
-          <td>${esc(r.Subject||'')}</td>
-          <td>${esc(r.Description||'')}</td>
-          <td>${esc(r.Status||'')}</td>
-          <td>${esc(r.Response||'')}</td>
-        </tr>
-      `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
-        <tr><th>Date</th><th>Subject</th><th>Description</th><th>Status</th><th>Response</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}
+    } 
+    else if (key === 'attendance') {
+      const rows = (d.attendance || []).slice(-62).reverse();
+      html = `<table class="tbl">
+        <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th></tr>
+        ${rows.map(r => `<tr><td>${r.Date}</td><td>${r.InTime}</td><td>${r.OutTime}</td><td>${r.Status}</td></tr>`).join('')}
       </table>`;
-      return;
     }
-
-    if (key === 'bonus') {
-      const rows = d.bonus || [];
-      const html = rows.slice().reverse().map(r => `
-        <tr>
-          <td>${esc(r.Date||'')}</td>
-          <td>${esc(r.Amount||'')}</td>
-          <td>${esc(r.Notes||'')}</td>
-        </tr>
-      `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
-        <tr><th>Date</th><th>Amount</th><th>Notes</th></tr>
-        ${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}
-      </table>`;
-      return;
+    else if (key === 'salary') {
+        const rows = (d.salarySlips || []).reverse();
+        html = `<table class="tbl">
+          <tr><th>Month</th><th>Net Pay</th><th>Action</th></tr>
+          ${rows.map(r => `<tr><td>${r.Month}-${r.Year}</td><td>${r.Net}</td><td><a href="${r.PDFUrl}" target="_blank">View</a></td></tr>`).join('')}
+        </table>`;
     }
-
-    if (key === 'leaves') {
-      const rows = d.leaveRequests || [];
-      const html = rows.slice().reverse().map(r => `
-        <tr>
-          <td>${esc(r.FromDate||'')}</td>
-          <td>${esc(r.ToDate||'')}</td>
-          <td>${esc(r.Type||'')}</td>
-          <td>${esc(r.Reason||'')}</td>
-          <td>${esc(r.Status||'')}</td>
-        </tr>
-      `).join('');
-      sectionBody.innerHTML = `<table class="tbl">
-        <tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>
-        ${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}
-      </table>`;
-      return;
-    }
-
-    if (key === 'holidays') {
+    else if (key === 'holidays') {
       const rows = d.holidays || d.Holidays || [];
-      const html = rows.map(r => `
-        <tr>
-          <td>${esc(pick(r, ['Month (MMM-YY)', 'Month', 'MONTH'], '-'))}</td>
-          <td>${esc(pick(r, ['Holiday Date(DD-MMM-YY)', 'Holiday Date', 'HolidayDate', 'Date'], '-'))}</td>
-          <td>${esc(pick(r, ['Status', 'STATUS'], '-'))}</td>
-          <td>${esc(pick(r, ['Days', 'DAYS', 'Day'], '-'))}</td>
-        </tr>
-      `).join('');
-
-      sectionBody.innerHTML = `<table class="tbl">
-        <tr>
-          <th>Month</th>
-          <th>Holiday Date</th>
-          <th>Status</th>
-          <th>Days</th>
-        </tr>
-        ${html || '<tr><td colspan="4" class="muted">No holidays</td></tr>'}
+      html = `<table class="tbl">
+        <tr><th>Date</th><th>Holiday Name</th><th>Day</th></tr>
+        ${rows.map(r => `<tr><td>${r['Holiday Date(DD-MMM-YY)'] || r.Date}</td><td>${r.Status}</td><td>${r.Days}</td></tr>`).join('')}
       </table>`;
-      return;
+    }
+    // generic table for other simple sections
+    else {
+      html = `<p style="padding:20px; text-align:center;">Loading data for ${titles[key]}...</p>`;
     }
 
-    sectionBody.innerHTML = '<div class="muted">No view for this section.</div>';
-  }
-
-  function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
-
-  function showLeaveModal() {
-    const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
-    const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-
-    if (!isISODate(fromDate) || !isISODate(toDate)) {
-      document.getElementById('sectionBody').innerHTML = '<div class="warn">Invalid date format. Use YYYY-MM-DD</div>';
-      return;
-    }
-    if (toDate < fromDate) {
-      document.getElementById('sectionBody').innerHTML = '<div class="warn">To date cannot be before From date.</div>';
-      return;
-    }
-
-    const type = prompt('Type (Full/Half/SL):','Full') || 'Full';
-    const reason = prompt('Reason:') || '';
-
-    document.getElementById('sectionBody').innerHTML = '<div class="muted">Submitting…</div>';
-    applyLeave({ fromDate, toDate, type, reason })
-      .then(async ()=>{
-        document.getElementById('sectionBody').innerHTML='<div class="success">Leave request submitted.</div>';
-        await init();
-        openSection('leaves');
-      })
-      .catch(e=>{ document.getElementById('sectionBody').innerHTML='<div class="warn">'+esc(e.message||'Failed')+'</div>'; });
+    sectionBody.innerHTML = html || '<p style="padding:20px; text-align:center;">No records found.</p>';
   }
 
   async function init() {
-    setLoading(true);
-    document.getElementById('details').innerHTML = '<div class="muted">..... PLEASE WAIT .....</div>';
-
     try {
       const d = await fetchMe();
       window.__DATA__ = d;
-
       const p = d.profile || {};
-      document.getElementById('hello').textContent = 'Welcome, ' + String(p.Name || 'User').toUpperCase();
+      
+      document.getElementById('hello').textContent = p.Name;
+      document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`; 
+      document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/150'; };
 
-      setPhotoByEmpCode(p.EmpCode);
-
-      const details = `
-        ${kv('Employee ID', p.EmpID)}
-        ${kv('Emp Code', p.EmpCode)}
+      document.getElementById('details').innerHTML = `
+        ${kv('Emp ID', p.EmpID)}
         ${kv('Designation', p.Designation)}
-        ${kv("Father's Name", p.FatherName)}
-        ${kv('Gender', p.Gender)}
-        ${kv('ESIC Number', p.ESICNumber)}
-        ${kv('PF Number', p.PFNumber)}
-        ${kv('Date of Birth', p.DOB)}
         ${kv('Mobile', p.Mobile)}
-        ${kv('Aadhar', p.Aadhar)}
-        ${kv('ID Proof', p.IDProof)}
-        ${kv('Permanent Address', p.PermanentAddress)}
-        ${kv('Local Address', p.LocalAddress)}
+        ${kv('PF Number', p.PFNumber)}
         ${kv('Joining Date', p.JoiningDate)}
-        ${kv('Emergency Contact', p.EmergencyContact)}
-        ${kv('Status', p.Status)}
       `;
-      document.getElementById('details').innerHTML = details;
-
     } catch (e) {
-      alert('Session expired. Please login again.');
-      logout();
+      console.error(e);
     } finally {
       setLoading(false);
     }
   }
 
   init();
+
+  function logout() { 
+      localStorage.clear(); 
+      window.location.href = 'index.html'; 
+  }
 </script>
 </body>
 </html>
