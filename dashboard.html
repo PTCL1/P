@@ -4,134 +4,146 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Employee Dashboard | PTCL</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root { 
-    --bg: #e0e5ec; 
+    --bg: #e0e5ec; /* Neumorphic background from your image */
+    --card-bg: #e0e5ec;
     --text: #333; 
-    --yellow: #ffcc00; 
+    --yellow: #ffd400; 
     --shadow-dark: #a3b1c6;
     --shadow-light: #ffffff;
   }
   
   * { box-sizing: border-box; transition: all 0.3s ease; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
   
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 15px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-  /* Main Layout Grid */
-  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 25px; align-items: start; margin-top: 20px; }
+  /* Top Bar */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .logo-box { font-weight: 800; font-size: 24px; color: var(--text); }
+  .logout-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; }
 
-  /* Neumorphic Card Base */
+  /* Main Grid */
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 25px; align-items: start; }
+
+  /* Neumorphic Card */
   .card {
-    background: var(--bg); border-radius: 40px; padding: 30px;
+    background: var(--card-bg);
+    border-radius: 40px;
+    padding: 30px;
     box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-    text-align: center; margin-bottom: 25px;
+    text-align: center;
   }
 
   /* Large Profile Image */
   .photo-container {
-    width: 240px; height: 240px; margin: 0 auto 20px; border-radius: 50%;
+    width: 220px; height: 220px; margin: 0 auto 20px; border-radius: 50%;
     border: 8px solid var(--bg); overflow: hidden;
     box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
   }
   .photo-container img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: #222; }
+  .user-name { font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
 
-  /* Hidden Details Section */
+  /* Details Section (Initially Hidden) */
   #details { 
     display: none; margin-top: 25px; text-align: left; 
-    padding: 15px; background: rgba(255,255,255,0.2); border-radius: 20px; 
-    animation: slideDown 0.4s ease forwards;
+    padding: 15px; border-top: 1px solid rgba(0,0,0,0.05); 
+    animation: fadeIn 0.5s ease;
   }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 14px; }
-  .kv b { color: #666; font-weight: 600; }
-  .kv span { font-weight: 800; color: #000; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 13px; }
+  .kv b { color: #666; } .kv span { font-weight: 700; color: #000; }
 
   /* Icon Buttons Grid */
-  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-  .btn {
-    background: var(--bg); border: none; border-radius: 25px; padding: 20px 5px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  .btns-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .btn-icon {
+    background: var(--card-bg); border: none; border-radius: 25px; padding: 20px 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
     cursor: pointer; box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
   }
-  .btn img { width: 50px; height: 50px; object-fit: contain; }
-  .btn span { font-size: 12px; font-weight: 700; color: #555; }
-  
-  .btn:active {
-    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    transform: scale(0.96);
-  }
+  .btn-icon img { width: 50px; height: 50px; object-fit: contain; }
+  .btn-icon span { font-size: 13px; font-weight: 700; color: #555; }
+  .btn-icon:active { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); transform: scale(0.96); }
 
-  /* Table Results Area */
-  #res_card { display: none; text-align: left; min-height: 200px; }
-  .res-header { font-weight: 800; font-size: 20px; color: #ff9f43; margin-bottom: 15px; }
+  /* Result Area */
+  #res_card { display: none; text-align: left; margin-top: 25px; }
+  .res-title { font-weight: 800; font-size: 20px; color: var(--yellow); margin-bottom: 15px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
   
-  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-  .tbl th { background: rgba(0,0,0,0.05); padding: 12px; text-align: left; }
+  .tbl { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  .tbl th { text-align: left; padding: 12px; border-bottom: 2px solid var(--shadow-dark); color: #666; }
   .tbl td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
-  @media (max-width: 900px) {
-    .grid { grid-template-columns: 1fr; }
-    .photo-container { width: 180px; height: 180px; }
-  }
+  .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; font-weight: 800; }
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .btns-container { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
 
+<div id="loader" class="loading-overlay">LOADING...</div>
+
 <div class="wrap">
+  <div class="topbar">
+    <div class="logo-box">PTCL PORTAL</div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
   <div class="grid">
-    
     <div class="card">
       <div class="photo-container">
-        <img id="u_img" src="" alt="Profile Photo">
+        <img id="u_img" src="" alt="Profile">
       </div>
-      <div class="user-name" id="u_name">Loading...</div>
+      <div class="user-name" id="u_name">Employee Name</div>
       
       <div id="details"></div>
     </div>
 
-    <div class="content-side">
+    <div class="main-content">
       <div class="card">
-        <div class="btns">
-          <div class="btn" onclick="handleAction('leave-balance')"><img src="icons/leave-bal.png"><span>Leave Bal</span></div>
-          <div class="btn" onclick="handleAction('attendance')"><img src="icons/attendance.png"><span>Attendance</span></div>
-          <div class="btn" onclick="handleAction('salary')"><img src="icons/salary.png"><span>Salary</span></div>
-          <div class="btn" onclick="handleAction('documents')"><img src="icons/docs.png"><span>Docs</span></div>
-          <div class="btn" onclick="handleAction('complaints')"><img src="icons/status.png"><span>Status</span></div>
-          <div class="btn" onclick="window.location.href='COM.HTML'"><img src="icons/apply.png"><span>Comp. Apply</span></div>
-          <div class="btn" onclick="handleAction('bonus')"><img src="icons/bonus.png"><span>Bonus</span></div>
-          <div class="btn" onclick="handleAction('leaves')"><img src="icons/leave-req.png"><span>Leave Status</span></div>
-          <div class="btn" onclick="handleAction('holidays')"><img src="icons/holiday.png"><span>Holidays</span></div>
+        <div class="btns-container">
+          <button class="btn-icon" onclick="handleAction('leave-balance')"><img src="icons/leave-bal.png"><span>Leave Bal</span></button>
+          <button class="btn-icon" onclick="handleAction('attendance')"><img src="icons/attendance.png"><span>Attendance</span></button>
+          <button class="btn-icon" onclick="handleAction('salary')"><img src="icons/salary.png"><span>Salary Slip</span></button>
+          <button class="btn-icon" onclick="handleAction('documents')"><img src="icons/docs.png"><span>Documents</span></button>
+          <button class="btn-icon" onclick="handleAction('complaints')"><img src="icons/status.png"><span>Comp. Status</span></button>
+          <button class="btn-icon" onclick="window.location.href='COM.HTML'"><img src="icons/apply.png"><span>Apply Comp</span></button>
+          <button class="btn-icon" onclick="handleAction('bonus')"><img src="icons/bonus.png"><span>Bonus</span></button>
+          <button class="btn-icon" onclick="handleAction('leaves')"><img src="icons/leave-req.png"><span>Leave Status</span></button>
+          <button class="btn-icon" onclick="handleAction('holidays')"><img src="icons/holiday.png"><span>Holidays</span></button>
         </div>
       </div>
 
       <div class="card" id="res_card">
-        <div id="res_title" class="res-header"></div>
+        <div id="res_title" class="res-title">Section Name</div>
         <div id="res_body"></div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  function kv(l, v) { return `<div class="kv"><b>${l}</b><span>${v || '-'}</span></div>`; }
+  // Purana Logic Condition ke sath
+  function kv(l, v) { return `<div class="kv"><b>${l}:</b><span>${v || '-'}</span></div>`; }
 
   function handleAction(key) {
-    // Show components
+    // 1. Profile ki details niche show karein
     document.getElementById('details').style.display = 'block';
+    // 2. Result card show karein
     document.getElementById('res_card').style.display = 'block';
-    
-    // Call existing openSection from app.js
-    if(typeof openSection === "function") {
-      openSection(key);
-    }
+    // 3. Tab Title update karein
+    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance History','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests','holidays':'Holiday List'};
+    document.getElementById('res_title').innerText = titles[key] || 'Details';
+    // 4. Call existing openSection from app.js
+    if(typeof openSection === 'function') openSection(key);
   }
+
+  // Override openSection data rendering (aapki script se match kiya hai)
+  // Note: Ye assume kar rha hai ki app.js mein logic exists hai, 
+  // agar aapko table render yahi karna hai toh bataiye.
 
   async function init() {
     try {
@@ -140,20 +152,20 @@
       const p = d.profile || {};
       
       document.getElementById('u_name').innerText = p.Name;
-      const img = document.getElementById('u_img');
-      img.src = `photos/${p.EmpCode}.jpg`;
-      img.onerror = () => img.src = 'https://via.placeholder.com/240';
+      document.getElementById('u_img').src = `photos/${p.EmpCode}.jpg`;
+      document.getElementById('u_img').onerror = function() { this.src='https://via.placeholder.com/220'; };
 
-      // Load data into hidden details div
+      // Details ready (hidden by default)
       document.getElementById('details').innerHTML = `
         ${kv('Emp ID', p.EmpCode)}
         ${kv('Designation', p.Designation)}
         ${kv('Mobile', p.Mobile)}
-        ${kv('Join Date', p.JoiningDate)}
+        ${kv('Joining Date', p.JoiningDate)}
+        ${kv('Status', p.Status)}
       `;
-    } catch(e) { console.error(e); }
+    } catch(e) { console.log(e); }
+    document.getElementById('loader').classList.add('hidden');
   }
-
   init();
 </script>
 </body>
