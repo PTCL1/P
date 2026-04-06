@@ -3,124 +3,133 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Employee Portal</title>
+<title>Employee Dashboard | PTCL</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-  :root { --bg: #e0e5ec; --text: #333; --yellow: #ffcc00; --shadow-dark: #a3b1c6; --shadow-light: #ffffff; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  :root { 
+    --bg: #e0e5ec; 
+    --text: #333; 
+    --yellow: #ffcc00; 
+    --shadow-dark: #a3b1c6;
+    --shadow-light: #ffffff;
+  }
+  
+  * { box-sizing: border-box; transition: all 0.3s ease; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+  
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 15px; }
 
-  /* Grid Layout */
-  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+  /* Main Layout Grid */
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 25px; align-items: start; margin-top: 20px; }
 
-  /* Neumorphic Card */
+  /* Neumorphic Card Base */
   .card {
-    background: var(--bg); border-radius: 35px; padding: 25px;
+    background: var(--bg); border-radius: 40px; padding: 30px;
+    box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+    text-align: center; margin-bottom: 25px;
+  }
+
+  /* Large Profile Image */
+  .photo-container {
+    width: 240px; height: 240px; margin: 0 auto 20px; border-radius: 50%;
+    border: 8px solid var(--bg); overflow: hidden;
     box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-    text-align: center; margin-bottom: 20px;
   }
+  .photo-container img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: #222; }
 
-  /* Profile Image - Large Size */
-  .photo-box {
-    width: 200px; height: 200px; margin: 0 auto 15px; border-radius: 50%;
-    border: 6px solid var(--bg); overflow: hidden;
-    box-shadow: 8px 8px 15px var(--shadow-dark), -8px -8px 15px var(--shadow-light);
+  /* Hidden Details Section */
+  #details { 
+    display: none; margin-top: 25px; text-align: left; 
+    padding: 15px; background: rgba(255,255,255,0.2); border-radius: 20px; 
+    animation: slideDown 0.4s ease forwards;
   }
-  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { font-size: 26px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Hidden Details */
-  #details { display: none; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px; }
-  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 14px; }
-  .kv b { color: #666; } .kv span { font-weight: 700; }
+  .kv { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 14px; }
+  .kv b { color: #666; font-weight: 600; }
+  .kv span { font-weight: 800; color: #000; }
 
-  /* Fast Icon Buttons */
+  /* Icon Buttons Grid */
   .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .btn {
-    background: var(--bg); border: none; border-radius: 20px; padding: 20px 10px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    background: var(--bg); border: none; border-radius: 25px; padding: 20px 5px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    cursor: pointer; box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
   }
-  .btn i { font-size: 24px; color: var(--yellow); }
+  .btn img { width: 50px; height: 50px; object-fit: contain; }
   .btn span { font-size: 12px; font-weight: 700; color: #555; }
-  .btn:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
-
-  /* Data Table */
-  .tbl { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  .tbl th, .tbl td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
   
-  .loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 99; font-weight: 800; }
-  .hidden { display: none !important; }
-  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
+  .btn:active {
+    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+    transform: scale(0.96);
+  }
+
+  /* Table Results Area */
+  #res_card { display: none; text-align: left; min-height: 200px; }
+  .res-header { font-weight: 800; font-size: 20px; color: #ff9f43; margin-bottom: 15px; }
+  
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  .tbl th { background: rgba(0,0,0,0.05); padding: 12px; text-align: left; }
+  .tbl td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .photo-container { width: 180px; height: 180px; }
+  }
 </style>
 </head>
 <body>
 
-<div id="loader" class="loading">LOADING...</div>
-
 <div class="wrap">
   <div class="grid">
+    
     <div class="card">
-      <div class="photo-box"><img id="u_img" src="" alt="User"></div>
-      <div class="user-name" id="u_name">Employee</div>
-      <div id="details"></div> </div>
+      <div class="photo-container">
+        <img id="u_img" src="" alt="Profile Photo">
+      </div>
+      <div class="user-name" id="u_name">Loading...</div>
+      
+      <div id="details"></div>
+    </div>
 
-    <div class="main">
+    <div class="content-side">
       <div class="card">
         <div class="btns">
-          <div class="btn" onclick="showData('leave-balance')"><i class="fas fa-wallet"></i><span>Leave Bal</span></div>
-          <div class="btn" onclick="showData('attendance')"><i class="fas fa-clock"></i><span>Attendance</span></div>
-          <div class="btn" onclick="showData('salary')"><i class="fas fa-money-check-alt"></i><span>Salary</span></div>
-          <div class="btn" onclick="showData('documents')"><i class="fas fa-file-pdf"></i><span>Docs</span></div>
-          <div class="btn" onclick="showData('complaints')"><i class="fas fa-headset"></i><span>Status</span></div>
-          <div class="btn" onclick="showData('holidays')"><i class="fas fa-sun"></i><span>Holidays</span></div>
+          <div class="btn" onclick="handleAction('leave-balance')"><img src="icons/leave-bal.png"><span>Leave Bal</span></div>
+          <div class="btn" onclick="handleAction('attendance')"><img src="icons/attendance.png"><span>Attendance</span></div>
+          <div class="btn" onclick="handleAction('salary')"><img src="icons/salary.png"><span>Salary</span></div>
+          <div class="btn" onclick="handleAction('documents')"><img src="icons/docs.png"><span>Docs</span></div>
+          <div class="btn" onclick="handleAction('complaints')"><img src="icons/status.png"><span>Status</span></div>
+          <div class="btn" onclick="window.location.href='COM.HTML'"><img src="icons/apply.png"><span>Comp. Apply</span></div>
+          <div class="btn" onclick="handleAction('bonus')"><img src="icons/bonus.png"><span>Bonus</span></div>
+          <div class="btn" onclick="handleAction('leaves')"><img src="icons/leave-req.png"><span>Leave Status</span></div>
+          <div class="btn" onclick="handleAction('holidays')"><img src="icons/holiday.png"><span>Holidays</span></div>
         </div>
       </div>
 
-      <div class="card" id="res_card" style="display:none; text-align:left;">
-        <h3 id="res_title" style="color:var(--yellow); margin-top:0;">Details</h3>
+      <div class="card" id="res_card">
+        <div id="res_title" class="res-header"></div>
         <div id="res_body"></div>
       </div>
     </div>
+
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  function kv(l, v) { return `<div class="kv"><b>${l}:</b><span>${v || '-'}</span></div>`; }
+  function kv(l, v) { return `<div class="kv"><b>${l}</b><span>${v || '-'}</span></div>`; }
 
-  function showData(key) {
-    // 1. Show Profile Details
+  function handleAction(key) {
+    // Show components
     document.getElementById('details').style.display = 'block';
-    // 2. Show Table Card
     document.getElementById('res_card').style.display = 'block';
-    // 3. Run Section Logic
-    openSection(key); 
-  }
-
-  // Override openSection to keep it fast
-  function openSection(key) {
-    const d = window.__DATA__;
-    const body = document.getElementById('res_body');
-    const title = document.getElementById('res_title');
     
-    if(!d) return;
-    
-    if(key === 'attendance') {
-      title.innerText = "Attendance History";
-      let rows = (d.attendance || []).slice(-30).reverse();
-      body.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Status</th></tr>${rows.map(r=>`<tr><td>${r.Date}</td><td>${r.Status}</td></tr>`).join('')}</table>`;
-    } 
-    else if(key === 'leave-balance') {
-      title.innerText = "Leave Balance";
-      let lb = d.leaveBalance || {};
-      body.innerHTML = `<div style="padding:10px;">${kv('CL Balance', lb.BalanceCL)}${kv('EL Balance', lb.BalanceEL)}</div>`;
-    }
-    else {
-      body.innerHTML = `<p style="padding:10px;">Data loading for ${key}...</p>`;
+    // Call existing openSection from app.js
+    if(typeof openSection === "function") {
+      openSection(key);
     }
   }
 
@@ -129,16 +138,22 @@
       const d = await fetchMe();
       window.__DATA__ = d;
       const p = d.profile || {};
+      
       document.getElementById('u_name').innerText = p.Name;
-      document.getElementById('u_img').src = `photos/${p.EmpCode}.jpg`;
+      const img = document.getElementById('u_img');
+      img.src = `photos/${p.EmpCode}.jpg`;
+      img.onerror = () => img.src = 'https://via.placeholder.com/240';
+
+      // Load data into hidden details div
       document.getElementById('details').innerHTML = `
         ${kv('Emp ID', p.EmpCode)}
+        ${kv('Designation', p.Designation)}
         ${kv('Mobile', p.Mobile)}
-        ${kv('Joining', p.JoiningDate)}
+        ${kv('Join Date', p.JoiningDate)}
       `;
-    } catch(e) { console.log(e); }
-    document.getElementById('loader').classList.add('hidden');
+    } catch(e) { console.error(e); }
   }
+
   init();
 </script>
 </body>
