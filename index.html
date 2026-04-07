@@ -6,183 +6,181 @@
 <title>PTCL Employee Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { 
-    --bg: #e0e5ec; 
-    --text: #444; 
-    --yellow: #ffcc00; 
-    --shadow-dark: #a3b1c6;
-    --shadow-light: #ffffff;
-    --danger: #e74c3c;
-  }
+  :root { 
+    --bg: #e0e5ec; 
+    --text: #444; 
+    --yellow: #ffcc00; 
+    --shadow-dark: #a3b1c6;
+    --shadow-light: #ffffff;
+    --danger: #e74c3c;
+  }
 
-  * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
-  
-  body { 
-    margin: 0; 
-    background: var(--bg); 
-    color: var(--text); 
-    font-family: 'Inter', sans-serif; 
-    min-height: 100vh;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-  }
+  * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+  
+  body { 
+    margin: 0; 
+    background: var(--bg); 
+    color: var(--text); 
+    font-family: 'Inter', sans-serif; 
+    min-height: 100vh;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+  }
 
-  /* Neumorphic Card */
-  .card { 
-    width: min(420px, 92vw); 
-    background: var(--bg); 
-    border-radius: 30px; 
-    padding: 40px 30px; 
-    box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
-    text-align: center;
-  }
+  /* Neumorphic Card */
+  .card { 
+    width: min(420px, 92vw); 
+    background: var(--bg); 
+    border-radius: 30px; 
+    padding: 40px 30px; 
+    box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
+    text-align: center;
+  }
 
-  /* Logo Circle */
-  .logo { 
-    width: 100px; 
-    height: 100px; 
-    border-radius: 50%; 
-    background: var(--yellow); 
-    color: #000; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-weight: 800; 
-    font-size: 28px; 
-    margin: 0 auto 20px;
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-  }
+  /* Logo Circle */
+  .logo { 
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%; 
+    background: var(--yellow); 
+    color: #000; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 800; 
+    font-size: 28px; 
+    margin: 0 auto 20px;
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
 
-  h1 { font-size: 24px; font-weight: 800; margin-bottom: 30px; color: #333; }
+  h1 { font-size: 24px; font-weight: 800; margin-bottom: 30px; color: #333; }
 
-  .input-group { text-align: left; margin-bottom: 20px; }
-  
-  label { 
-    display: block; 
-    font-size: 13px; 
-    font-weight: 700; 
-    color: #666; 
-    margin-left: 10px; 
-    margin-bottom: 8px; 
-  }
+  .input-group { text-align: left; margin-bottom: 20px; }
+  
+  label { 
+    display: block; 
+    font-size: 13px; 
+    font-weight: 700; 
+    color: #666; 
+    margin-left: 10px; 
+    margin-bottom: 8px; 
+  }
 
-  /* Neumorphic Inputs */
-  input { 
-    width: 100%; 
-    padding: 15px 20px; 
-    background: var(--bg); 
-    border: none; 
-    border-radius: 15px; 
-    outline: none; 
-    color: #444;
-    font-weight: 600;
-    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-  }
+  /* Neumorphic Inputs */
+  input { 
+    width: 100%; 
+    padding: 15px 20px; 
+    background: var(--bg); 
+    border: none; 
+    border-radius: 15px; 
+    outline: none; 
+    color: #444;
+    font-weight: 600;
+    box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+  }
 
-  input:focus {
-    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
-  }
+  input:focus {
+    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  }
 
-  /* Login Button */
-  button { 
-    width: 100%; 
-    padding: 15px; 
-    border-radius: 15px; 
-    border: none;
-    background: var(--bg);
-    color: #333; 
-    font-weight: 800; 
-    font-size: 16px; 
-    margin-top: 20px; 
-    cursor: pointer; 
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-  }
+  /* Login Button */
+  button { 
+    width: 100%; 
+    padding: 15px; 
+    border-radius: 15px; 
+    border: none;
+    background: var(--bg);
+    color: #333; 
+    font-weight: 800; 
+    font-size: 16px; 
+    margin-top: 20px; 
+    cursor: pointer; 
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
 
-  button:active {
-    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-    transform: scale(0.98);
-  }
+  button:active {
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+    transform: scale(0.98);
+  }
 
-  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  .error { 
-    color: var(--danger); 
-    margin-top: 15px; 
-    font-size: 13px; 
-    font-weight: 600;
-    min-height: 1.2em; 
-  }
+  .error { 
+    color: var(--danger); 
+    margin-top: 15px; 
+    font-size: 13px; 
+    font-weight: 600;
+    min-height: 1.2em; 
+  }
 
-  .foot { 
-    margin-top: 30px; 
-    color: #888; 
-    font-size: 11px; 
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
+  .foot { 
+    margin-top: 30px; 
+    color: #888; 
+    font-size: 11px; 
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="logo">PTCL</div>
-  <h1>Employee Login</h1>
-  
-  <div class="input-group">
-    <label>Employee ID</label>
-    <input id="empId" placeholder="Enter ID (e.g. E65)" autocomplete="username">
-  </div>
+  <div class="logo">PTCL</div>
+  <h1>Employee Login</h1>
+  
+  <div class="input-group">
+    <label>Employee ID</label>
+    <input id="empId" placeholder="Enter ID (e.g. E65)" autocomplete="username">
+  </div>
 
-  <div class="input-group">
-    <label>Password</label>
-    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
-  </div>
+  <div class="input-group">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
 
-  <button id="loginBtn">Login</button>
-  <div class="error" id="msg"></div>
-  
-  <div class="foot">DESIGNED BY VINAY MAAN</div>
+  <button id="loginBtn">Login</button>
+  <div class="error" id="msg"></div>
+  
+  <div class="foot">DESIGNED BY VINAY MAAN</div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  const empInput = document.getElementById('empId');
-  const passInput = document.getElementById('password');
-  const msg = document.getElementById('msg');
-  const btn = document.getElementById('loginBtn');
+  const empInput = document.getElementById('empId');
+  const passInput = document.getElementById('password');
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('loginBtn');
 
-  function setLoading(v){ 
-    btn.disabled = v; 
-    btn.textContent = v ? 'Verifying...' : 'Login'; 
-  }
+  function setLoading(v){ 
+    btn.disabled = v; 
+    btn.textContent = v ? 'Verifying...' : 'Login'; 
+  }
 
-  btn.addEventListener('click', async () => {
-    msg.textContent = '';
-    const empId = empInput.value.trim();
-    const password = passInput.value;
-    
-    if (!empId || !password) { 
-      msg.textContent = 'Please enter ID and Password'; 
-      return; 
-    }
+  btn.addEventListener('click', async () => {
+    msg.textContent = '';
+    const empId = empInput.value.trim();
+    const password = passInput.value;
+    
+    if (!empId || !password) { 
+      msg.textContent = 'Please enter ID and Password'; 
+      return; 
+    }
 
-    try {
-      setLoading(true);
-      await login(empId, password);
-      window.location.href = 'dashboard.html';
-    } catch(e) {
-      msg.textContent = e.message || 'Login failed';
-    } finally {
-      setLoading(false);
-    }
-  });
+    try {
+      setLoading(true);
+      await login(empId, password);
+      window.location.href = 'dashboard.html';
+    } catch(e) {
+      msg.textContent = e.message || 'Login failed';
+    } finally {
+      setLoading(false);
+    }
+  });
 
-  document.addEventListener('keydown', e => { 
-    if (e.key === 'Enter') btn.click(); 
-  });
+  document.addEventListener('keydown', e => { 
+    if (e.key === 'Enter') btn.click(); 
+  });
 </script>
 </body>
 </html>
-
-YE WALA BEST HA
