@@ -3,84 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complaint Form</title>
+  <title>Complaint Form | PTCL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #000;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #FFD700;
+    :root { 
+      --bg: #e0e5ec; 
+      --text: #333; 
+      --red-accent: #e74c3c; 
+      --shadow-dark: #a3b1c6;
+      --shadow-light: #ffffff;
+      --danger: #e74c3c;
+      --success: #27ae60;
     }
-    .container {
-      background: #111;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
-      width: 420px;
-      animation: fadeIn 0.6s ease-in-out;
+
+    * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+    
+    body { 
+      margin: 0; 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: 'Inter', sans-serif; 
+      min-height: 100vh;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 20px;
     }
-    h2 { text-align: center; color: #FFD700; margin-bottom: 20px; font-size: 22px; }
-    label { font-weight: 600; display: block; margin-bottom: 6px; color: #FFD700; }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 16px;
-      border: 1px solid #FFD700;
-      border-radius: 8px;
-      outline: none;
-      background: #000;
-      color: #FFD700;
-      transition: 0.3s;
+
+    /* Neumorphic Container */
+    .container { 
+      width: min(450px, 100%); 
+      background: var(--bg); 
+      border-radius: 40px; 
+      padding: 40px 30px; 
+      box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
     }
-    input:focus, textarea:focus { border-color: #FFA500; box-shadow: 0 0 8px #FFD700; }
-    textarea { resize: none; height: 80px; }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #FFD700;
+
+    h2 { 
+      font-size: 22px; 
+      font-weight: 800; 
+      margin-bottom: 30px; 
+      color: #222; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+      border-bottom: 3px solid var(--red-accent);
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    .form-group { text-align: left; margin-bottom: 18px; }
+    
+    label { 
+      display: block; 
+      font-size: 11px; 
+      font-weight: 800; 
+      color: #777; 
+      margin-left: 15px; 
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    /* Neumorphic Inputs & Textarea */
+    input, textarea { 
+      width: 100%; 
+      padding: 14px 20px; 
+      background: var(--bg); 
+      border: none; 
+      border-radius: 15px; 
+      outline: none; 
+      color: #444;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+    }
+
+    input:read-only { color: #888; cursor: not-allowed; }
+
+    input:focus:not(:read-only), textarea:focus {
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      border-left: 3px solid var(--red-accent);
+    }
+
+    textarea { resize: none; height: 100px; }
+
+    /* Buttons Style */
+    .btn-group { display: flex; gap: 15px; margin-top: 25px; }
+
+    button { 
+      flex: 1;
+      padding: 15px; 
+      border-radius: 15px; 
       border: none;
-      border-radius: 8px;
-      color: #000;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 8px;
+      background: var(--bg);
+      font-weight: 800; 
+      font-size: 14px; 
+      cursor: pointer; 
+      box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    button:hover { background: #FFA500; color: #fff; }
-    button:disabled { opacity: .6; cursor: not-allowed; }
-    .close-btn { background: #FF4500; color: #fff; }
-    .close-btn:hover { background: #FF0000; }
-    .status { text-align: center; margin-top: 15px; font-weight: 500; display: none; }
-    .status.success { color: #00FF00; }
-    .status.error { color: #FF6347; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    #submitBtn { color: var(--red-accent); }
+    .close-btn { color: #555; }
+
+    button:active {
+      box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+      transform: scale(0.98);
+    }
+
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .status { 
+      margin-top: 20px; 
+      font-size: 13px; 
+      font-weight: 700;
+      min-height: 1.2em;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+    .status.success { color: var(--success); display: block; }
+    .status.error { color: var(--danger); display: block; }
+    .status.info { color: #555; display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
+
   <div class="container">
     <h2>Complaint Form</h2>
 
     <form id="complaintForm">
-      <label>Employee Name:</label>
-      <input type="text" id="empName" readonly>
+      <div class="form-group">
+        <label>Employee Name</label>
+        <input type="text" id="empName" readonly>
+      </div>
 
-      <label>Date:</label>
-      <input type="date" id="date" readonly required>
+      <div class="form-group">
+        <label>Current Date</label>
+        <input type="date" id="date" readonly required>
+      </div>
 
-      <label>Against Person / Subject:</label>
-      <input type="text" id="againstPerson" required>
+      <div class="form-group">
+        <label>Against Person / Subject</label>
+        <input type="text" id="againstPerson" placeholder="Enter Name or Topic" required>
+      </div>
 
-      <label>What's Complaint:</label>
-      <textarea id="complaint" required></textarea>
+      <div class="form-group">
+        <label>Complaint Details</label>
+        <textarea id="complaint" placeholder="Type your complaint here..." required></textarea>
+      </div>
 
-      <button id="submitBtn" type="button" onclick="submitComplaint()">Submit</button>
-      <button type="button" class="close-btn" onclick="goBack()">Close</button>
+      <div class="btn-group">
+        <button id="submitBtn" type="button" onclick="submitComplaint()">Submit</button>
+        <button type="button" class="close-btn" onclick="goBack()">Close</button>
+      </div>
     </form>
 
     <div class="status" id="statusMsg"></div>
@@ -92,18 +176,13 @@
       return new Date().toISOString().split("T")[0];
     }
 
-    window.onload = async function () {
+    window.onload = function () {
       document.getElementById("date").value = todayISO();
+      document.getElementById("empName").value = localStorage.getItem('ep_name') || 'Employee';
 
-      // Name from localStorage (set during login)
-      const name = localStorage.getItem('ep_name') || '';
-      document.getElementById("empName").value = name;
-
-      // If token missing, go login
       if (!localStorage.getItem('ep_token')) {
         alert('Please login again.');
         window.location.href = 'index.html';
-        return;
       }
     };
 
@@ -115,22 +194,28 @@
       const againstPerson = document.getElementById("againstPerson").value.trim();
       const complaint = document.getElementById("complaint").value.trim();
 
+      if(!againstPerson || !complaint) {
+          statusMsg.textContent = "Please fill all fields.";
+          statusMsg.className = "status error";
+          return;
+      }
+
       statusMsg.style.display = "block";
-      statusMsg.className = "status";
-      statusMsg.textContent = "Please wait, your complaint is being saved...";
+      statusMsg.className = "status info";
+      statusMsg.textContent = "Saving your complaint...";
       btn.disabled = true;
 
       try {
         await applyComplaint({ date, againstPerson, complaint });
 
-        statusMsg.textContent = "Complaint submitted successfully!";
+        statusMsg.textContent = "Submitted successfully!";
         statusMsg.className = "status success";
 
         document.getElementById("complaintForm").reset();
         document.getElementById("date").value = todayISO();
         document.getElementById("empName").value = localStorage.getItem('ep_name') || '';
       } catch (err) {
-        statusMsg.textContent = "Error: " + (err.message || String(err));
+        statusMsg.textContent = "Error: " + (err.message || "Failed to save");
         statusMsg.className = "status error";
       } finally {
         btn.disabled = false;
