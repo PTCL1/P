@@ -222,11 +222,18 @@ else if (key === 'HR_Policies') {
       const d = await fetchMe();
       window.__DATA__ = d;
       const p = d.profile || {};
+      
+      // --- NAYA LOGIC: LocalStorage mein data save karna ---
+      localStorage.setItem('ep_name', p.Name || '');
+      localStorage.setItem('ep_id', p.EmpID || '');
+      localStorage.setItem('ep_dept', p.Department || '');
+      // --------------------------------------------------
+
       document.getElementById('hello').textContent = String(p.Name || 'Welcome').toUpperCase();
       document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`;
       document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/200'; };
 
-      // Details div mein data load ho jayega par dikhega click ke baad
+      // Details div mein data load
       document.getElementById('details').innerHTML = `
         ${kv('Employee ID', p.EmpID)}
         ${kv('Department', p.Department)}
@@ -237,7 +244,12 @@ else if (key === 'HR_Policies') {
         ${kv('Status', p.Status)}
         ${kv('DOB', p.DOB)}
       `;
-    } catch (e) { logout(); } finally { setLoading(false); }
+    } catch (e) { 
+        console.error("Init Error:", e);
+        logout(); 
+    } finally { 
+        setLoading(false); 
+    }
   }
   init();
 </script>
