@@ -6,76 +6,76 @@
 <title>Employee Dashboard | PTCL</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { 
-    --bg: #e0e5ec; 
-    --text: #444; 
-    --yellow: #ffcc00; 
-    --shadow-dark: #a3b1c6;
-    --shadow-light: #ffffff;
-  }
-  
-  * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-  
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 15px; }
+  :root { 
+    --bg: #e0e5ec; 
+    --text: #444; 
+    --yellow: #ffcc00; 
+    --shadow-dark: #a3b1c6;
+    --shadow-light: #ffffff;
+  }
+  
+  * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+  
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 15px; }
 
-  /* Top Bar */
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; }
-  .logo-box { font-weight: 800; font-size: 22px; color: #333; display: flex; align-items: center; gap: 10px; }
-  .logo-circle { width: 50px; height: 50px; background: var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 4px 4px 8px var(--shadow-dark); font-size: 14px; color: #000; }
-  .logout { background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; box-shadow: 4px 4px 8px var(--shadow-dark); }
+  /* Top Bar */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; }
+  .logo-box { font-weight: 800; font-size: 22px; color: #333; display: flex; align-items: center; gap: 10px; }
+  .logo-circle { width: 50px; height: 50px; background: var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 4px 4px 8px var(--shadow-dark); font-size: 14px; color: #000; }
+  .logout { background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; box-shadow: 4px 4px 8px var(--shadow-dark); }
 
-  /* Grid Layout */
-  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+  /* Grid Layout */
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
 
-  /* Neumorphic Card */
-  .card {
-    background: var(--bg); border-radius: 30px; padding: 25px;
-    box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
-    text-align: center; margin-bottom: 20px;
-  }
+  /* Neumorphic Card */
+  .card {
+    background: var(--bg); border-radius: 30px; padding: 25px;
+    box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
+    text-align: center; margin-bottom: 20px;
+  }
 
-  /* Large Profile Photo */
-  .photo-box {
-    width: 200px; height: 200px; margin: 0 auto 15px; border-radius: 50%;
-    border: 6px solid var(--bg); overflow: hidden;
-    box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
-  }
-  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: #222; }
+  /* Large Profile Photo */
+  .photo-box {
+    width: 200px; height: 200px; margin: 0 auto 15px; border-radius: 50%;
+    border: 6px solid var(--bg); overflow: hidden;
+    box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
+  }
+  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: #222; }
 
-  /* Details Section */
-  #details { display: none; margin-top: 20px; text-align: left; padding: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
-  .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 13px; }
-  .kv b { color: #666; font-weight: 600; }
-  .kv span { font-weight: 700; color: #000; text-align: right; }
+  /* Details Section (Hidden by Default) */
+  #details { display: none; margin-top: 20px; text-align: left; padding: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+  .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 13px; }
+  .kv b { color: #666; font-weight: 600; }
+  .kv span { font-weight: 700; color: #000; text-align: right; }
 
-  /* Icon Buttons Grid */
-  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .btn-item {
-    background: var(--bg); border: none; border-radius: 20px; padding: 15px 5px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-  }
-  .btn-item img { width: 45px; height: 45px; object-fit: contain; }
-  .btn-item span { font-size: 11px; font-weight: 700; color: #555; }
-  .btn-item:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transform: scale(0.95); }
+  /* Icon Buttons Grid */
+  .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .btn-item {
+    background: var(--bg); border: none; border-radius: 20px; padding: 15px 5px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
+  .btn-item img { width: 45px; height: 45px; object-fit: contain; }
+  .btn-item span { font-size: 11px; font-weight: 700; color: #555; }
+  .btn-item:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transform: scale(0.95); }
 
-  /* Result Area */
-  #sectionCard { display: none; text-align: left; }
-  .section-title { font-weight: 800; font-size: 18px; color: #f39c12; margin-bottom: 15px; border-bottom: 2px solid var(--yellow); display: inline-block; }
-  
-  /* Table Styling */
-  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-  .tbl th { background: rgba(0,0,0,0.03); padding: 10px; text-align: left; color: #777; }
-  .tbl td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-  a { color: #2980b9; font-weight: 700; text-decoration: none; }
+  /* Result Area */
+  #sectionCard { display: none; text-align: left; }
+  .section-title { font-weight: 800; font-size: 18px; color: #f39c12; margin-bottom: 15px; border-bottom: 2px solid var(--yellow); display: inline-block; }
+  
+  /* Table Styling */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  .tbl th { background: rgba(0,0,0,0.03); padding: 10px; text-align: left; color: #777; }
+  .tbl td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+  a { color: #2980b9; font-weight: 700; text-decoration: none; }
 
-  /* Loader */
-  .loadingOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; font-weight: 800; color: #888; }
-  .hidden { display: none !important; }
+  /* Loader */
+  .loadingOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; font-weight: 800; color: #888; }
+  .hidden { display: none !important; }
 
-  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } .btns { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } .btns { grid-template-columns: repeat(3, 1fr); } }
 </style>
 </head>
 <body>
@@ -83,162 +83,156 @@
 <div id="loadingOverlay" class="loadingOverlay">..... PLEASE WAIT .....</div>
 
 <div class="wrap">
-  <div class="topbar">
-    <div class="logo-box"><div class="logo-circle">PTCL</div> <span>Employee Portal</span></div>
-    <button class="logout" onclick="logout()">Logout</button>
-  </div>
+  <div class="topbar">
+    <div class="logo-box"><div class="logo-circle">PTCL</div> <span>Employee Portal</span></div>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
 
-  <div class="grid">
-    <div class="card">
-      <div class="photo-box">
-        <img id="photo" src="" alt="Photo">
-      </div>
-      <div class="user-name" id="hello">Welcome</div>
-      <div id="details"></div>
-    </div>
+  <div class="grid">
+    <div class="card">
+      <div class="photo-box">
+        <img id="photo" src="" alt="Photo">
+      </div>
+      <div class="user-name" id="hello">Welcome</div>
+      
+      <div id="details"></div>
+    </div>
 
-    <div class="main-content">
-      <div class="card">
-        <div class="btns">
-          <div class="btn-item" onclick="handleAction('leave-balance')"><img src="photos/leave-bal.png"><span>Leave Bal</span></div>
-          <div class="btn-item" onclick="handleAction('attendance')"><img src="photos/attendance.png"><span>Attendance (62 Days)</span></div>
-          <div class="btn-item" onclick="handleAction('salary')"><img src="photos/salary.png"><span>Salary Slip</span></div>
-          <div class="btn-item" onclick="handleAction('documents')"><img src="photos/docs.png"><span>Documents</span></div>
-          <div class="btn-item" onclick="handleAction('hr-policies')"><img src="photos/docs.png"><span>HR Policies</span></div>
-          <div class="btn-item" onclick="handleAction('complaints')"><img src="photos/status.png"><span>Comp. Status</span></div>
-          <div class="btn-item" onclick="window.location.href='COM.HTML'"><img src="photos/apply.png"><span>Comp. Apply</span></div>
-          <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Bonus</span></div>
-          <div class="btn-item" onclick="handleAction('leaves')"><img src="photos/leave-req.png"><span>Leave Status</span></div>
-          <div class="btn-item" onclick="showLeaveModal()"><img src="photos/leave-apply.png"><span>Leave Apply</span></div>
-          <div class="btn-item" onclick="handleAction('holidays')"><img src="photos/holiday.png"><span>Holiday List</span></div>
-        </div>
-      </div>
+    <div class="main-content">
+      <div class="card">
+<div class="btns">
+  <div class="btn-item" onclick="handleAction('leave-balance')"><img src="photos/leave-bal.png"><span>Leave Bal</span></div>
+  <div class="btn-item" onclick="handleAction('attendance')"><img src="photos/attendance.png"><span>Attendance (62 Days)</span></div>
+  <div class="btn-item" onclick="handleAction('salary')"><img src="photos/salary.png"><span>Salary Slip</span></div>
+  <div class="btn-item" onclick="handleAction('documents')"><img src="photos/docs.png"><span>Documents</span></div>
+  <div class="btn-item" onclick="handleAction('complaints')"><img src="photos/status.png"><span>Comp. Status</span></div>
+  <div class="btn-item" onclick="window.location.href='COM.HTML'"><img src="photos/apply.png"><span>Comp. Apply</span></div>
+  <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Bonus</span></div>
+  <div class="btn-item" onclick="handleAction('leaves')"><img src="photos/leave-req.png"><span>Leave Status</span></div>
+  <div class="btn-item" onclick="showLeaveModal()"><img src="photos/leave-apply.png"><span>Leave Apply</span></div>
+  <div class="btn-item" onclick="handleAction('holidays')"><img src="photos/holiday.png"><span>Holiday List</span></div>
+</div>
+      </div>
 
-      <div class="card" id="sectionCard">
-        <div id="sectionTitle" class="section-title">Select an option</div>
-        <div id="sectionBody"></div>
-      </div>
-    </div>
-  </div>
+      <div class="card" id="sectionCard">
+        <div id="sectionTitle" class="section-title">Select an option</div>
+        <div id="sectionBody"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  const sectionTitle = document.getElementById('sectionTitle');
-  const sectionBody = document.getElementById('sectionBody');
-  const loadingOverlay = document.getElementById('loadingOverlay');
+  // --- AAPKA ORIGINAL LOGIC START ---
+  const sectionTitle = document.getElementById('sectionTitle');
+  const sectionBody = document.getElementById('sectionBody');
+  const loadingOverlay = document.getElementById('loadingOverlay');
 
-  function setLoading(on) { loadingOverlay.classList.toggle('hidden', !on); }
-  function esc(v) { return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
-  function escAttr(v) { return esc(v).replace(/`/g, '&#96;'); }
-  function kv(label, value) { return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`; }
-  
-  function pick(obj, keys, fallback = '') {
-    for (const k of keys) {
-      const v = obj?.[k];
-      if (v !== undefined && v !== null && String(v).trim() !== '') return v;
-    }
-    return fallback;
-  }
+  function setLoading(on) { loadingOverlay.classList.toggle('hidden', !on); }
+  function esc(v) { return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+  function escAttr(v) { return esc(v).replace(/`/g, '&#96;'); }
+  function kv(label, value) { return `<div class="kv"><b>${esc(label)}:</b> <span> ${esc(value)}</span></div>`; }
+  
+  function pick(obj, keys, fallback = '') {
+    for (const k of keys) {
+      const v = obj?.[k];
+      if (v !== undefined && v !== null && String(v).trim() !== '') return v;
+    }
+    return fallback;
+  }
 
-  function handleAction(key) {
-    document.getElementById('details').style.display = 'block';
-    document.getElementById('sectionCard').style.display = 'block';
-    openSection(key);
-  }
+  // Handle Action (Dono cheezein ek sath trigger hongi)
+  function handleAction(key) {
+    document.getElementById('details').style.display = 'block'; // Profile info dikhao
+    document.getElementById('sectionCard').style.display = 'block'; // Result card dikhao
+    openSection(key); // Original openSection call
+  }
 
-  function openSection(key) {
-    const titles = { 
-        'leave-balance':'Leave Balance', 
-        'attendance':'Attendance', 
-        'salary':'Salary Slips', 
-        'documents':'Documents', 
-        'hr-policies':'HR Policies', 
-        'complaints':'Complaints', 
-        'bonus':'Bonus', 
-        'leaves':'Leave Requests', 
-        'holidays':'Holidays' 
-    };
-    sectionTitle.textContent = titles[key] || 'Details';
-    const d = window.__DATA__;
-    if (!d) { sectionBody.innerHTML = '<div>Data not loaded.</div>'; return; }
+  // --- AAPKA ORIGINAL OPEN SECTION (UNCHANGED) ---
+  function openSection(key) {
+    const titles = { 'leave-balance':'Leave Balance', 'attendance':'Attendance', 'salary':'Salary Slips', 'documents':'Documents', 'complaints':'Complaints', 'bonus':'Bonus', 'leaves':'Leave Requests', 'holidays':'Holidays' };
+    sectionTitle.textContent = titles[key] || 'Details';
+    const d = window.__DATA__;
+    if (!d) { sectionBody.innerHTML = '<div>Data not loaded.</div>'; return; }
 
-    if (key === 'leave-balance') {
-      const lb = d.leaveBalance || {};
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Last Year EL</th><th>Total EL</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr><tr><td>${esc(lb.LastYearEL ?? '-')}</td><td>${esc(lb.TotalEL ?? '-')}</td><td>${esc(lb.TotalCL ?? '-')}</td><td>${esc(lb.TakenCL ?? '-')}</td><td>${esc(lb.TakenEL ?? '-')}</td><td>${esc(lb.BalanceCL ?? '-')}</td><td>${esc(lb.BalanceEL ?? '-')}</td></tr></table>`;
-    } 
-    else if (key === 'attendance') {
-      const rows = d.attendance || [];
-      const html = rows.slice(-62).slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.InTime||'')}</td><td>${esc(r.OutTime||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Remarks||'')}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>${html || '<tr><td colspan="5">No records</td></tr>'}</table>`;
-    }
-    else if (key === 'salary') {
-      const rows = d.salarySlips || [];
-      const html = rows.slice().reverse().map(r => `<tr><td>${esc((r.Month||'') + '-' + (r.Year||''))}</td><td>${esc(r.Gross||'')}</td><td>${esc(r.Deductions||'')}</td><td>${esc(r.Net||'')}</td><td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank">View PDF</a>` : '-'}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>${html || '<tr><td colspan="5">No slips</td></tr>'}</table>`;
-    }
-    else if (key === 'documents' || key === 'hr-policies') {
-      // Dono ke liye logic same hai, bas data source alag ho sakta hai
-      const dataKey = (key === 'hr-policies') ? 'hrPolicies' : 'documents';
-      const rows = d[dataKey] || [];
-      const html = rows.map(r => `<tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank">Open</a>` : '-'}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3">No records found</td></tr>'}</table>`;
-    }
-    else if (key === 'complaints') {
-      const rows = d.complaints || [];
-      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.Subject||'')}</td><td>${esc(r.Description||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Response||'')}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Subject</th><th>Description</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5">No records</td></tr>'}</table>`;
-    }
-    else if (key === 'bonus') {
-      const rows = d.bonus || [];
-      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.Amount||'')}</td><td>${esc(r.Notes||'')}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>${html || '<tr><td colspan="3">No bonus</td></tr>'}</table>`;
-    }
-    else if (key === 'leaves') {
-      const rows = d.leaveRequests || [];
-      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.FromDate||'')}</td><td>${esc(r.ToDate||'')}</td><td>${esc(r.Type||'')}</td><td>${esc(r.Reason||'')}</td><td>${esc(r.Status||'')}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5">No requests</td></tr>'}</table>`;
-    }
-    else if (key === 'holidays') {
-      const rows = d.holidays || d.Holidays || [];
-      const html = rows.map(r => `<tr><td>${esc(pick(r, ['Month (MMM-YY)', 'Month'], '-'))}</td><td>${esc(pick(r, ['Holiday Date(DD-MMM-YY)', 'Date'], '-'))}</td><td>${esc(pick(r, ['Status'], '-'))}</td><td>${esc(pick(r, ['Days'], '-'))}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Date</th><th>Status</th><th>Days</th></tr>${html || '<tr><td colspan="4">No holidays</td></tr>'}</table>`;
-    }
-  }
+    if (key === 'leave-balance') {
+      const lb = d.leaveBalance || {};
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Last Year EL</th><th>Total EL</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr><tr><td>${esc(lb.LastYearEL ?? '-')}</td><td>${esc(lb.TotalEL ?? '-')}</td><td>${esc(lb.TotalCL ?? '-')}</td><td>${esc(lb.TakenCL ?? '-')}</td><td>${esc(lb.TakenEL ?? '-')}</td><td>${esc(lb.BalanceCL ?? '-')}</td><td>${esc(lb.BalanceEL ?? '-')}</td></tr></table>`;
+    } 
+    else if (key === 'attendance') {
+      const rows = d.attendance || [];
+      const html = rows.slice(-62).slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.InTime||'')}</td><td>${esc(r.OutTime||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Remarks||'')}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>${html || '<tr><td colspan="5">No records</td></tr>'}</table>`;
+    }
+    else if (key === 'salary') {
+      const rows = d.salarySlips || [];
+      const html = rows.slice().reverse().map(r => `<tr><td>${esc((r.Month||'') + '-' + (r.Year||''))}</td><td>${esc(r.Gross||'')}</td><td>${esc(r.Deductions||'')}</td><td>${esc(r.Net||'')}</td><td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank">View PDF</a>` : '-'}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>${html || '<tr><td colspan="5">No slips</td></tr>'}</table>`;
+    }
+    else if (key === 'documents') {
+      const rows = d.documents || [];
+      const html = rows.map(r => `<tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank">Open</a>` : '-'}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3">No docs</td></tr>'}</table>`;
+    }
+    else if (key === 'complaints') {
+      const rows = d.complaints || [];
+      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.Subject||'')}</td><td>${esc(r.Description||'')}</td><td>${esc(r.Status||'')}</td><td>${esc(r.Response||'')}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Subject</th><th>Description</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5">No records</td></tr>'}</table>`;
+    }
+    else if (key === 'bonus') {
+      const rows = d.bonus || [];
+      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.Date||'')}</td><td>${esc(r.Amount||'')}</td><td>${esc(r.Notes||'')}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>${html || '<tr><td colspan="3">No bonus</td></tr>'}</table>`;
+    }
+    else if (key === 'leaves') {
+      const rows = d.leaveRequests || [];
+      const html = rows.slice().reverse().map(r => `<tr><td>${esc(r.FromDate||'')}</td><td>${esc(r.ToDate||'')}</td><td>${esc(r.Type||'')}</td><td>${esc(r.Reason||'')}</td><td>${esc(r.Status||'')}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5">No requests</td></tr>'}</table>`;
+    }
+    else if (key === 'holidays') {
+      const rows = d.holidays || d.Holidays || [];
+      const html = rows.map(r => `<tr><td>${esc(pick(r, ['Month (MMM-YY)', 'Month'], '-'))}</td><td>${esc(pick(r, ['Holiday Date(DD-MMM-YY)', 'Date'], '-'))}</td><td>${esc(pick(r, ['Status'], '-'))}</td><td>${esc(pick(r, ['Days'], '-'))}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Date</th><th>Status</th><th>Days</th></tr>${html || '<tr><td colspan="4">No holidays</td></tr>'}</table>`;
+    }
+  }
 
-  function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
-  function showLeaveModal() {
-    const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
-    const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-    if (!isISODate(fromDate) || !isISODate(toDate)) { alert('Invalid format'); return; }
-    const type = prompt('Type (Full/Half/SL):','Full') || 'Full';
-    const reason = prompt('Reason:') || '';
-    applyLeave({ fromDate, toDate, type, reason }).then(async ()=>{ alert('Submitted'); await init(); handleAction('leaves'); }).catch(e=>alert(e.message));
-  }
+  // --- LEAVE MODAL & INIT ---
+  function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
+  function showLeaveModal() {
+    const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
+    const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
+    if (!isISODate(fromDate) || !isISODate(toDate)) { alert('Invalid format'); return; }
+    const type = prompt('Type (Full/Half/SL):','Full') || 'Full';
+    const reason = prompt('Reason:') || '';
+    applyLeave({ fromDate, toDate, type, reason }).then(async ()=>{ alert('Submitted'); await init(); handleAction('leaves'); }).catch(e=>alert(e.message));
+  }
 
-  async function init() {
-    setLoading(true);
-    try {
-      const d = await fetchMe();
-      window.__DATA__ = d;
-      const p = d.profile || {};
-      document.getElementById('hello').textContent = String(p.Name || 'Welcome').toUpperCase();
-      document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`;
-      document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/200'; };
+  async function init() {
+    setLoading(true);
+    try {
+      const d = await fetchMe();
+      window.__DATA__ = d;
+      const p = d.profile || {};
+      document.getElementById('hello').textContent = String(p.Name || 'Welcome').toUpperCase();
+      document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`;
+      document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/200'; };
 
-      document.getElementById('details').innerHTML = `
-        ${kv('Employee ID', p.EmpID)}
-        ${kv('Emp Code', p.EmpCode)}
-        ${kv('Designation', p.Designation)}
-        ${kv('PF Number', p.PFNumber)}
-        ${kv('Mobile', p.Mobile)}
-        ${kv('Joining Date', p.JoiningDate)}
-        ${kv('Status', p.Status)}
-        ${kv('DOB', p.DOB)}
-      `;
-    } catch (e) { logout(); } finally { setLoading(false); }
-  }
-  init();
+      // Details div mein data load ho jayega par dikhega click ke baad
+      document.getElementById('details').innerHTML = `
+        ${kv('Employee ID', p.EmpID)}
+        ${kv('Emp Code', p.EmpCode)}
+        ${kv('Designation', p.Designation)}
+        ${kv('PF Number', p.PFNumber)}
+        ${kv('Mobile', p.Mobile)}
+        ${kv('Joining Date', p.JoiningDate)}
+        ${kv('Status', p.Status)}
+        ${kv('DOB', p.DOB)}
+      `;
+    } catch (e) { logout(); } finally { setLoading(false); }
+  }
+  init();
 </script>
 </body>
 </html>
+
