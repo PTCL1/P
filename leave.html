@@ -16,53 +16,25 @@
     }
 
     * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
-    
-    body { 
-      margin: 0; background: var(--bg); color: var(--text); 
-      font-family: 'Inter', sans-serif; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
 
-    /* Neumorphic Container */
-    .container { 
-      width: min(500px, 100%); background: var(--bg); border-radius: 40px; 
-      padding: 40px 30px; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
-      text-align: center;
-    }
-
-    h2 { 
-      font-size: 22px; font-weight: 800; margin-bottom: 25px; color: #222; 
-      text-transform: uppercase; border-bottom: 3px solid var(--green-accent);
-      display: inline-block; padding-bottom: 5px;
-    }
+    .container { width: min(500px, 100%); background: var(--bg); border-radius: 40px; padding: 40px 30px; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light); text-align: center; }
+    h2 { font-size: 22px; font-weight: 800; margin-bottom: 25px; color: #222; text-transform: uppercase; border-bottom: 3px solid var(--green-accent); display: inline-block; padding-bottom: 5px; }
 
     .form-group { text-align: left; margin-bottom: 15px; }
     label { display: block; font-size: 11px; font-weight: 800; color: #777; margin-left: 15px; margin-bottom: 6px; text-transform: uppercase; }
 
-    /* Neumorphic Inputs */
-    input, textarea, select { 
-      width: 100%; padding: 14px 20px; background: var(--bg); border: none; border-radius: 15px; 
-      outline: none; color: #444; font-weight: 600; font-size: 14px;
-      box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    }
-
+    input, textarea, select { width: 100%; padding: 14px 20px; background: var(--bg); border: none; border-radius: 15px; outline: none; color: #444; font-weight: 600; font-size: 14px; box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
     input:read-only { background: #dce1e9; color: #666; cursor: not-allowed; }
 
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; }
 
-    /* Neumorphic Buttons */
     .btn-group { display: flex; gap: 15px; margin-top: 25px; }
-    button { 
-      flex: 1; padding: 15px; border-radius: 15px; border: none; background: var(--bg);
-      font-weight: 800; cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-      text-transform: uppercase;
-    }
-
+    button { flex: 1; padding: 15px; border-radius: 15px; border: none; background: var(--bg); font-weight: 800; cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); text-transform: uppercase; }
     #submitBtn { color: var(--green-accent); }
-    button:active { transform: scale(0.95); box-shadow: inset 4px 4px 8px var(--shadow-dark); }
+    button:active { transform: scale(0.95); }
 
-    /* Status Messages */
     .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
     .status.success { color: var(--green-accent); display: block; }
     .status.error { color: var(--danger); display: block; }
@@ -71,24 +43,24 @@
 </head>
 <body>
 
-  <div class="container">
+  <div class="container" id="mainContainer">
     <h2>Apply Leave</h2>
 
     <form id="leaveForm">
       <div class="row">
         <div class="form-group">
           <label>Employee Name</label>
-          <input type="text" id="Name" readonly>
+          <input type="text" id="Name" readonly placeholder="Loading...">
         </div>
         <div class="form-group">
           <label>Department</label>
-          <input type="text" id="Department" readonly>
+          <input type="text" id="Department" readonly placeholder="Loading...">
         </div>
       </div>
 
       <div class="form-group">
         <label>Employee ID</label>
-        <input type="text" id="EmpID" readonly>
+        <input type="text" id="EmpID" readonly placeholder="Loading...">
       </div>
 
       <div class="row">
@@ -105,7 +77,7 @@
       <div class="form-group">
         <label>Leave Type</label>
         <select id="Type" required>
-          <option value="" disabled selected>Select Type</option>
+          <option value="" disabled selected>Select Leave Type</option>
           <option value="Sort Leave">Sort Leave</option>
           <option value="Half Day">Half Day</option>
           <option value="Full Day">Full Day</option>
@@ -114,7 +86,7 @@
 
       <div class="form-group">
         <label>Reason</label>
-        <textarea id="Reason" rows="3" placeholder="Explain your reason..." required></textarea>
+        <textarea id="Reason" placeholder="Explain your reason..." required></textarea>
       </div>
 
       <div class="btn-group">
@@ -128,29 +100,30 @@
 
   <script src="app.js"></script>
   <script>
-    window.onload = function () {
-      // 1. Aaj ki date nikalna
+    // Global variable to store profile data
+    let userProfile = null;
+
+    window.onload = async function () {
       const today = new Date().toISOString().split("T")[0];
-      
-      // 2. Back-date block karna (min date setting)
       const fromInp = document.getElementById("FromDate");
       const toInp = document.getElementById("ToDate");
+      
       if(fromInp) { fromInp.min = today; fromInp.value = today; }
       if(toInp) { toInp.min = today; toInp.value = today; }
 
-      // 3. LocalStorage se Profile Data uthana
-      // Note: Aapke Dashboard mein fetchMe() profile data window.__DATA__ ya localStorage mein save karta hai
-      const savedName = localStorage.getItem('ep_name');
-      const savedDept = localStorage.getItem('ep_dept');
-      const savedID = localStorage.getItem('ep_id');
-
-      if (savedName) {
-        document.getElementById("Name").value = savedName;
-        document.getElementById("Department").value = savedDept || "N/A";
-        document.getElementById("EmpID").value = savedID || "N/A";
-      } else {
-        // Agar data nahi mil raha toh wapas login par bhej do
-        alert("Session expired. Please login again.");
+      // Dashboard logic ki tarah data fetch karna
+      try {
+        const d = await fetchMe(); // Dashboard wala function
+        if (d && d.profile) {
+          userProfile = d.profile;
+          document.getElementById("Name").value = userProfile.Name || '';
+          document.getElementById("Department").value = userProfile.Department || '';
+          document.getElementById("EmpID").value = userProfile.EmpID || '';
+        } else {
+          throw new Error("Profile not found");
+        }
+      } catch (e) {
+        alert("Session expired or Data error. Redirecting to login...");
         window.location.href = 'index.html';
       }
     };
@@ -159,7 +132,7 @@
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
-      // Google Sheet ke Columns (A to I) ke mutabiq data
+      // Sheet columns ke exact sequence (A to I) ke mutabiq
       const leaveData = {
         Timestamp: new Date().toLocaleString(),
         EmpID: document.getElementById("EmpID").value,
@@ -172,33 +145,32 @@
         Department: document.getElementById("Department").value
       };
 
-      // Validation
-      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "N/A") {
-        statusMsg.textContent = "Error: Please fill all fields properly.";
+      // Validation logic check
+      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "" || leaveData.EmpID === "Loading...") {
+        statusMsg.textContent = "Error: Please wait for details to load or fill all fields!";
         statusMsg.className = "status error";
         statusMsg.style.display = "block";
         return;
       }
 
-      // Button disable aur Loading show karna
       btn.disabled = true;
       statusMsg.className = "status info";
-      statusMsg.textContent = "Processing your request...";
+      statusMsg.textContent = "Saving request...";
       statusMsg.style.display = "block";
 
       try {
-        // Dashboard wali app.js ka function use kar rahe hain
         await applyLeave(leaveData); 
-
         statusMsg.textContent = "Leave Applied Successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
         
-        // Reset ke baad auto-fields wapas fill karna
-        document.getElementById("Name").value = localStorage.getItem('ep_name');
-        document.getElementById("Department").value = localStorage.getItem('ep_dept');
-        document.getElementById("EmpID").value = localStorage.getItem('ep_id');
-        
+        // Data refill after reset
+        document.getElementById("Name").value = userProfile.Name;
+        document.getElementById("Department").value = userProfile.Department;
+        document.getElementById("EmpID").value = userProfile.EmpID;
+        document.getElementById("FromDate").value = new Date().toISOString().split("T")[0];
+        document.getElementById("ToDate").value = new Date().toISOString().split("T")[0];
+
       } catch (err) {
         statusMsg.textContent = "Error: " + err.message;
         statusMsg.className = "status error";
@@ -209,5 +181,3 @@
   </script>
 </body>
 </html>
-
-
