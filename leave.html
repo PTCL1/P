@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leave Application | PTCL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { 
+      --bg: #e0e5ec; 
+      --text: #333; 
+      --green-accent: #27ae60; 
+      --shadow-dark: #a3b1c6;
+      --shadow-light: #ffffff;
+      --danger: #e74c3c;
+    }
+
+    * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+    
+    body { 
+      margin: 0; 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: 'Inter', sans-serif; 
+      min-height: 100vh;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 20px;
+    }
+
+    .container { 
+      width: min(480px, 100%); 
+      background: var(--bg); 
+      border-radius: 40px; 
+      padding: 40px 30px; 
+      box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
+      text-align: center;
+    }
+
+    h2 { 
+      font-size: 22px; 
+      font-weight: 800; 
+      margin-bottom: 30px; 
+      color: #222; 
+      text-transform: uppercase; 
+      border-bottom: 3px solid var(--green-accent);
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    .form-group { text-align: left; margin-bottom: 18px; }
+    
+    label { 
+      display: block; 
+      font-size: 11px; 
+      font-weight: 800; 
+      color: #777; 
+      margin-left: 15px; 
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    input, textarea, select { 
+      width: 100%; 
+      padding: 14px 20px; 
+      background: var(--bg); 
+      border: none; 
+      border-radius: 15px; 
+      outline: none; 
+      color: #444;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+    }
+
+    input:read-only { background: #dce1e9; color: #666; cursor: not-allowed; }
+
+    input:focus:not(:read-only), textarea:focus, select:focus {
+      border-left: 3px solid var(--green-accent);
+    }
+
+    .row { display: flex; gap: 10px; }
+    .row .form-group { flex: 1; }
+
+    .btn-group { display: flex; gap: 15px; margin-top: 25px; }
+
+    button { 
+      flex: 1;
+      padding: 15px; 
+      border-radius: 15px; 
+      border: none;
+      background: var(--bg);
+      font-weight: 800; 
+      cursor: pointer; 
+      box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+      text-transform: uppercase;
+    }
+
+    #submitBtn { color: var(--green-accent); }
+    button:active { transform: scale(0.98); box-shadow: inset 4px 4px 8px var(--shadow-dark); }
+
+    .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
+    .status.success { color: var(--green-accent); display: block; }
+    .status.error { color: var(--danger); display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Apply Leave</h2>
+
+    <form id="leaveForm">
+      <div class="form-group">
+        <label>Employee Name</label>
+        <input type="text" id="empName" readonly placeholder="Loading name...">
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>From Date</label>
+          <input type="date" id="fromDate" required>
+        </div>
+        <div class="form-group">
+          <label>To Date</label>
+          <input type="date" id="toDate" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Leave Type</label>
+        <select id="leaveType" required>
+          <option value="" disabled selected>Select Leave Type</option>
+          <option value="Casual">Casual Leave</option>
+          <option value="Sick">Sick Leave</option>
+          <option value="Emergency">Emergency Leave</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Reason</label>
+        <textarea id="reason" placeholder="Mention reason here..." required></textarea>
+      </div>
+
+      <div class="btn-group">
+        <button id="submitBtn" type="button" onclick="handleLeaveSubmit()">Submit Request</button>
+        <button type="button" onclick="window.history.back()">Back</button>
+      </div>
+    </form>
+
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    window.onload = function () {
+      const today = new Date().toISOString().split("T")[0];
+      
+      // 1. Back date disable karne ka logic
+      const fromInput = document.getElementById("fromDate");
+      const toInput = document.getElementById("toDate");
+      
+      fromInput.min = today;
+      toInput.min = today;
+      fromInput.value = today;
+      toInput.value = today;
+
+      // 2. Name Auto-fill logic
+      const savedName = localStorage.getItem('ep_name');
+      if (savedName) {
+        document.getElementById("empName").value = savedName;
+      } else {
+        alert("Session expired. Please login again.");
+        window.location.href = 'index.html';
+      }
+    };
+
+    async function handleLeaveSubmit() {
+      const statusMsg = document.getElementById("statusMsg");
+      const btn = document.getElementById("submitBtn");
+
+      const data = {
+        name: document.getElementById("empName").value,
+        fromDate: document.getElementById("fromDate").value,
+        toDate: document.getElementById("toDate").value,
+        type: document.getElementById("leaveType").value,
+        reason: document.getElementById("reason").value.trim(),
+        status: "Pending" // Initial status for Leave_Requests tab
+      };
+
+      if(!data.type || !data.reason) {
+        statusMsg.textContent = "Please fill all fields.";
+        statusMsg.className = "status error";
+        return;
+      }
+
+      btn.disabled = true;
+      statusMsg.textContent = "Processing...";
+      statusMsg.className = "status info";
+      statusMsg.style.display = "block";
+
+      try {
+        // Yeh function aapke app.js mein hona chahiye jo "Leave_Requests" tab mein save kare
+        await applyLeave(data); 
+
+        statusMsg.textContent = "Leave request sent successfully!";
+        statusMsg.className = "status success";
+        document.getElementById("leaveForm").reset();
+        // Reset name after form clear
+        document.getElementById("empName").value = localStorage.getItem('ep_name');
+      } catch (err) {
+        statusMsg.textContent = "Error: " + err.message;
+        statusMsg.className = "status error";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
