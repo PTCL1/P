@@ -44,7 +44,7 @@
   .photo-box img { width: 100%; height: 100%; object-fit: cover; }
   .user-name { font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: #222; }
 
-  /* Details Section (Hidden by Default) */
+  /* Details Section */
   #details { display: none; margin-top: 20px; text-align: left; padding: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
   .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.02); font-size: 13px; }
   .kv b { color: #666; font-weight: 600; }
@@ -94,24 +94,24 @@
         <img id="photo" src="" alt="Photo">
       </div>
       <div class="user-name" id="hello">Welcome</div>
-      
       <div id="details"></div>
     </div>
 
     <div class="main-content">
       <div class="card">
-<div class="btns">
-  <div class="btn-item" onclick="handleAction('leave-balance')"><img src="photos/leave-bal.png"><span>Leave Bal</span></div>
-  <div class="btn-item" onclick="handleAction('attendance')"><img src="photos/attendance.png"><span>Attendance (62 Days)</span></div>
-  <div class="btn-item" onclick="handleAction('salary')"><img src="photos/salary.png"><span>Salary Slip</span></div>
-  <div class="btn-item" onclick="handleAction('documents')"><img src="photos/docs.png"><span>Documents</span></div>
-  <div class="btn-item" onclick="handleAction('complaints')"><img src="photos/status.png"><span>Comp. Status</span></div>
-  <div class="btn-item" onclick="window.location.href='COM.HTML'"><img src="photos/apply.png"><span>Comp. Apply</span></div>
-  <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Hr Policies</span></div>
-  <div class="btn-item" onclick="handleAction('leaves')"><img src="photos/leave-req.png"><span>Leave Status</span></div>
-  <div class="btn-item" onclick="showLeaveModal()"><img src="photos/leave-apply.png"><span>Leave Apply</span></div>
-  <div class="btn-item" onclick="handleAction('holidays')"><img src="photos/holiday.png"><span>Holiday List</span></div>
-</div>
+        <div class="btns">
+          <div class="btn-item" onclick="handleAction('leave-balance')"><img src="photos/leave-bal.png"><span>Leave Bal</span></div>
+          <div class="btn-item" onclick="handleAction('attendance')"><img src="photos/attendance.png"><span>Attendance (62 Days)</span></div>
+          <div class="btn-item" onclick="handleAction('salary')"><img src="photos/salary.png"><span>Salary Slip</span></div>
+          <div class="btn-item" onclick="handleAction('documents')"><img src="photos/docs.png"><span>Documents</span></div>
+          <div class="btn-item" onclick="handleAction('hr-policies')"><img src="photos/docs.png"><span>HR Policies</span></div>
+          <div class="btn-item" onclick="handleAction('complaints')"><img src="photos/status.png"><span>Comp. Status</span></div>
+          <div class="btn-item" onclick="window.location.href='COM.HTML'"><img src="photos/apply.png"><span>Comp. Apply</span></div>
+          <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Bonus</span></div>
+          <div class="btn-item" onclick="handleAction('leaves')"><img src="photos/leave-req.png"><span>Leave Status</span></div>
+          <div class="btn-item" onclick="showLeaveModal()"><img src="photos/leave-apply.png"><span>Leave Apply</span></div>
+          <div class="btn-item" onclick="handleAction('holidays')"><img src="photos/holiday.png"><span>Holiday List</span></div>
+        </div>
       </div>
 
       <div class="card" id="sectionCard">
@@ -124,7 +124,6 @@
 
 <script src="app.js"></script>
 <script>
-  // --- AAPKA ORIGINAL LOGIC START ---
   const sectionTitle = document.getElementById('sectionTitle');
   const sectionBody = document.getElementById('sectionBody');
   const loadingOverlay = document.getElementById('loadingOverlay');
@@ -142,16 +141,24 @@
     return fallback;
   }
 
-  // Handle Action (Dono cheezein ek sath trigger hongi)
   function handleAction(key) {
-    document.getElementById('details').style.display = 'block'; // Profile info dikhao
-    document.getElementById('sectionCard').style.display = 'block'; // Result card dikhao
-    openSection(key); // Original openSection call
+    document.getElementById('details').style.display = 'block';
+    document.getElementById('sectionCard').style.display = 'block';
+    openSection(key);
   }
 
-  // --- AAPKA ORIGINAL OPEN SECTION (UNCHANGED) ---
   function openSection(key) {
-    const titles = { 'leave-balance':'Leave Balance', 'attendance':'Attendance', 'salary':'Salary Slips', 'documents':'Documents', 'complaints':'Complaints', 'bonus':'Bonus', 'leaves':'Leave Requests', 'holidays':'Holidays' };
+    const titles = { 
+        'leave-balance':'Leave Balance', 
+        'attendance':'Attendance', 
+        'salary':'Salary Slips', 
+        'documents':'Documents', 
+        'hr-policies':'HR Policies', 
+        'complaints':'Complaints', 
+        'bonus':'Bonus', 
+        'leaves':'Leave Requests', 
+        'holidays':'Holidays' 
+    };
     sectionTitle.textContent = titles[key] || 'Details';
     const d = window.__DATA__;
     if (!d) { sectionBody.innerHTML = '<div>Data not loaded.</div>'; return; }
@@ -170,10 +177,12 @@
       const html = rows.slice().reverse().map(r => `<tr><td>${esc((r.Month||'') + '-' + (r.Year||''))}</td><td>${esc(r.Gross||'')}</td><td>${esc(r.Deductions||'')}</td><td>${esc(r.Net||'')}</td><td>${r.PDFUrl ? `<a href="${escAttr(r.PDFUrl)}" target="_blank">View PDF</a>` : '-'}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>${html || '<tr><td colspan="5">No slips</td></tr>'}</table>`;
     }
-    else if (key === 'documents') {
-      const rows = d.documents || [];
+    else if (key === 'documents' || key === 'hr-policies') {
+      // Dono ke liye logic same hai, bas data source alag ho sakta hai
+      const dataKey = (key === 'hr-policies') ? 'hrPolicies' : 'documents';
+      const rows = d[dataKey] || [];
       const html = rows.map(r => `<tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank">Open</a>` : '-'}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3">No docs</td></tr>'}</table>`;
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3">No records found</td></tr>'}</table>`;
     }
     else if (key === 'complaints') {
       const rows = d.complaints || [];
@@ -197,7 +206,6 @@
     }
   }
 
-  // --- LEAVE MODAL & INIT ---
   function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
   function showLeaveModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
@@ -218,7 +226,6 @@
       document.getElementById('photo').src = `photos/${p.EmpCode}.jpg`;
       document.getElementById('photo').onerror = function() { this.src='https://via.placeholder.com/200'; };
 
-      // Details div mein data load ho jayega par dikhega click ke baad
       document.getElementById('details').innerHTML = `
         ${kv('Employee ID', p.EmpID)}
         ${kv('Emp Code', p.EmpCode)}
