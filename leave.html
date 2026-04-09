@@ -104,47 +104,56 @@
       });
     };
 
-    async function submitLeaveData() {
-      const statusMsg = document.getElementById("statusMsg");
-      const btn = document.getElementById("submitBtn");
+async function submitLeaveData() {
+  const statusMsg = document.getElementById("statusMsg");
+  const btn = document.getElementById("submitBtn");
 
-      const leaveData = {
-        Timestamp: new Date().toLocaleString(),
-        EmpID: document.getElementById("EmpID").value,
-        FromDate: document.getElementById("FromDate").value,
-        ToDate: document.getElementById("ToDate").value,
-        Type: document.getElementById("Type").value,
-        Reason: document.getElementById("Reason").value.trim(),
-        Status: "Pending",
-        Name: document.getElementById("Name").value,
-        Department: document.getElementById("Department").value
-      };
+  // Check karein ke fields khali na hon
+  const empId = document.getElementById("EmpID").value;
+  const type = document.getElementById("Type").value;
+  const reason = document.getElementById("Reason").value.trim();
 
-      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "Not Set") {
-        statusMsg.textContent = "Error: Please fill all fields!";
-        statusMsg.className = "status error";
-        statusMsg.style.display = "block";
-        return;
-      }
+  if (!type || !reason || !empId || empId === "Loading...") {
+    statusMsg.textContent = "Error: Please fill all fields and wait for ID to load!";
+    statusMsg.className = "status error";
+    statusMsg.style.display = "block";
+    return;
+  }
 
-      btn.disabled = true;
-      statusMsg.textContent = "Saving request...";
-      statusMsg.className = "status info";
-      statusMsg.style.display = "block";
+  const leaveData = {
+    action: 'applyleave', // Ye batana zaroori hai
+    token: localStorage.getItem('token'), // Auth ke liye
+    fromDate: document.getElementById("FromDate").value,
+    toDate: document.getElementById("ToDate").value,
+    type: type,
+    reason: reason,
+    name: document.getElementById("Name").value,
+    department: document.getElementById("Department").value
+  };
 
-      try {
-        await applyLeave(leaveData); 
-        statusMsg.textContent = "Leave Applied Successfully!";
-        statusMsg.className = "status success";
-        document.getElementById("leaveForm").reset();
-        window.onload(); // Refill read-only fields
-      } catch (err) {
-        statusMsg.textContent = "Error: " + err.message;
-        statusMsg.className = "status error";
-      } finally {
-        btn.disabled = false;
-      }
+  btn.disabled = true;
+  statusMsg.textContent = "Submitting to PTCL Server...";
+  statusMsg.className = "status info";
+  statusMsg.style.display = "block";
+
+  try {
+    // Ye app.js ka function hai
+    const response = await applyLeave(leaveData); 
+    if(response.ok) {
+      statusMsg.textContent = "Success! Your leave request is PENDING.";
+      statusMsg.className = "status success";
+      document.getElementById("leaveForm").reset();
+      window.onload(); // Fields wapas bharne ke liye
+    } else {
+      throw new Error(response.error);
     }
+  } catch (err) {
+    statusMsg.textContent = "Failed: " + err.message;
+    statusMsg.className = "status error";
+  } finally {
+    btn.disabled = false;
+  }
+}
   </script>
 </body>
 </html>
