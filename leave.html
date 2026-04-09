@@ -30,7 +30,7 @@
     }
 
     .container { 
-      width: min(480px, 100%); 
+      width: min(500px, 100%); 
       background: var(--bg); 
       border-radius: 40px; 
       padding: 40px 30px; 
@@ -41,7 +41,7 @@
     h2 { 
       font-size: 22px; 
       font-weight: 800; 
-      margin-bottom: 30px; 
+      margin-bottom: 25px; 
       color: #222; 
       text-transform: uppercase; 
       border-bottom: 3px solid var(--green-accent);
@@ -49,7 +49,7 @@
       padding-bottom: 5px;
     }
 
-    .form-group { text-align: left; margin-bottom: 18px; }
+    .form-group { text-align: left; margin-bottom: 15px; }
     
     label { 
       display: block; 
@@ -57,7 +57,7 @@
       font-weight: 800; 
       color: #777; 
       margin-left: 15px; 
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-transform: uppercase;
     }
 
@@ -75,10 +75,6 @@
     }
 
     input:read-only { background: #dce1e9; color: #666; cursor: not-allowed; }
-
-    input:focus:not(:read-only), textarea:focus, select:focus {
-      border-left: 3px solid var(--green-accent);
-    }
 
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; }
@@ -111,10 +107,18 @@
     <h2>Apply Leave</h2>
 
     <form id="leaveForm">
-      <div class="form-group">
-        <label>Employee Name</label>
-        <input type="text" id="empName" readonly placeholder="Loading name...">
+      <div class="row">
+        <div class="form-group">
+          <label>Employee Name</label>
+          <input type="text" id="empName" readonly>
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" id="dept" readonly>
+        </div>
       </div>
+
+      <input type="hidden" id="empID">
 
       <div class="row">
         <div class="form-group">
@@ -143,7 +147,7 @@
       </div>
 
       <div class="btn-group">
-        <button id="submitBtn" type="button" onclick="handleLeaveSubmit()">Submit Request</button>
+        <button id="submitBtn" type="button" onclick="handleLeaveSubmit()">Submit</button>
         <button type="button" onclick="window.history.back()">Back</button>
       </div>
     </form>
@@ -156,19 +160,23 @@
     window.onload = function () {
       const today = new Date().toISOString().split("T")[0];
       
-      // 1. Back date disable karne ka logic
+      // 1. Back date block logic
       const fromInput = document.getElementById("fromDate");
       const toInput = document.getElementById("toDate");
-      
       fromInput.min = today;
       toInput.min = today;
       fromInput.value = today;
       toInput.value = today;
 
-      // 2. Name Auto-fill logic
-      const savedName = localStorage.getItem('ep_name');
-      if (savedName) {
-        document.getElementById("empName").value = savedName;
+      // 2. Auto-fill from LocalStorage
+      const name = localStorage.getItem('ep_name');
+      const department = localStorage.getItem('ep_dept'); // Login script me ye save hona chahiye
+      const id = localStorage.getItem('ep_id');
+
+      if (name) {
+        document.getElementById("empName").value = name;
+        document.getElementById("dept").value = department || 'General';
+        document.getElementById("empID").value = id || '';
       } else {
         alert("Session expired. Please login again.");
         window.location.href = 'index.html';
@@ -179,35 +187,42 @@
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
+      // Yeh saara data Sheet ke headers ke mutabiq hai
       const data = {
-        name: document.getElementById("empName").value,
-        fromDate: document.getElementById("fromDate").value,
-        toDate: document.getElementById("toDate").value,
-        type: document.getElementById("leaveType").value,
-        reason: document.getElementById("reason").value.trim(),
-        status: "Pending" // Initial status for Leave_Requests tab
+        Timestamp: new Date().toLocaleString(),
+        EmpID: document.getElementById("empID").value,
+        FromDate: document.getElementById("fromDate").value,
+        ToDate: document.getElementById("toDate").value,
+        Type: document.getElementById("leaveType").value,
+        Reason: document.getElementById("reason").value.trim(),
+        Status: "Pending",
+        Name: document.getElementById("empName").value,
+        Department: document.getElementById("dept").value
       };
 
-      if(!data.type || !data.reason) {
+      if(!data.Type || !data.Reason) {
         statusMsg.textContent = "Please fill all fields.";
         statusMsg.className = "status error";
+        statusMsg.style.display = "block";
         return;
       }
 
       btn.disabled = true;
-      statusMsg.textContent = "Processing...";
+      statusMsg.textContent = "Saving to Leave_Requests...";
       statusMsg.className = "status info";
       statusMsg.style.display = "block";
 
       try {
-        // Yeh function aapke app.js mein hona chahiye jo "Leave_Requests" tab mein save kare
+        // App.js me function: await applyLeave(data)
         await applyLeave(data); 
 
-        statusMsg.textContent = "Leave request sent successfully!";
+        statusMsg.textContent = "Submitted successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
-        // Reset name after form clear
+        
+        // Reset auto fields
         document.getElementById("empName").value = localStorage.getItem('ep_name');
+        document.getElementById("dept").value = localStorage.getItem('ep_dept') || 'General';
       } catch (err) {
         statusMsg.textContent = "Error: " + err.message;
         statusMsg.className = "status error";
