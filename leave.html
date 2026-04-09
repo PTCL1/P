@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leave Application | PTCL</title>
+  <title>Apply Leave | PTCL</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { 
       --bg: #e0e5ec; 
-      --text: #333; 
+      --text: #444; 
       --green-accent: #27ae60; 
       --shadow-dark: #a3b1c6;
       --shadow-light: #ffffff;
@@ -23,6 +23,7 @@
       display: flex; align-items: center; justify-content: center; padding: 20px;
     }
 
+    /* Neumorphic Container */
     .container { 
       width: min(500px, 100%); background: var(--bg); border-radius: 40px; 
       padding: 40px 30px; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
@@ -38,6 +39,7 @@
     .form-group { text-align: left; margin-bottom: 15px; }
     label { display: block; font-size: 11px; font-weight: 800; color: #777; margin-left: 15px; margin-bottom: 6px; text-transform: uppercase; }
 
+    /* Neumorphic Inputs */
     input, textarea, select { 
       width: 100%; padding: 14px 20px; background: var(--bg); border: none; border-radius: 15px; 
       outline: none; color: #444; font-weight: 600; font-size: 14px;
@@ -49,6 +51,7 @@
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; }
 
+    /* Neumorphic Buttons */
     .btn-group { display: flex; gap: 15px; margin-top: 25px; }
     button { 
       flex: 1; padding: 15px; border-radius: 15px; border: none; background: var(--bg);
@@ -57,8 +60,9 @@
     }
 
     #submitBtn { color: var(--green-accent); }
-    button:active { transform: scale(0.98); box-shadow: inset 4px 4px 8px var(--shadow-dark); }
+    button:active { transform: scale(0.95); box-shadow: inset 4px 4px 8px var(--shadow-dark); }
 
+    /* Status Messages */
     .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
     .status.success { color: var(--green-accent); display: block; }
     .status.error { color: var(--danger); display: block; }
@@ -101,7 +105,7 @@
       <div class="form-group">
         <label>Leave Type</label>
         <select id="Type" required>
-          <option value="" disabled selected>Select Leave Type</option>
+          <option value="" disabled selected>Select Type</option>
           <option value="Sort Leave">Sort Leave</option>
           <option value="Half Day">Half Day</option>
           <option value="Full Day">Full Day</option>
@@ -110,7 +114,7 @@
 
       <div class="form-group">
         <label>Reason</label>
-        <textarea id="Reason" placeholder="Explain your reason..." required></textarea>
+        <textarea id="Reason" rows="3" placeholder="Explain your reason..." required></textarea>
       </div>
 
       <div class="btn-group">
@@ -124,23 +128,28 @@
 
   <script src="app.js"></script>
   <script>
-    // Page load hote hi data auto-fill aur back-date block karne ke liye
     window.onload = function () {
+      // 1. Aaj ki date nikalna
       const today = new Date().toISOString().split("T")[0];
       
+      // 2. Back-date block karna (min date setting)
       const fromInp = document.getElementById("FromDate");
       const toInp = document.getElementById("ToDate");
-      
       if(fromInp) { fromInp.min = today; fromInp.value = today; }
       if(toInp) { toInp.min = today; toInp.value = today; }
 
-      // LocalStorage se data uthana
-      // Note: Login script mein 'ep_name', 'ep_dept', 'ep_id' isi naam se save hona chahiye
-      document.getElementById("Name").value = localStorage.getItem('ep_name') || 'No Name';
-      document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'N/A';
-      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || 'Not Set';
+      // 3. LocalStorage se Profile Data uthana
+      // Note: Aapke Dashboard mein fetchMe() profile data window.__DATA__ ya localStorage mein save karta hai
+      const savedName = localStorage.getItem('ep_name');
+      const savedDept = localStorage.getItem('ep_dept');
+      const savedID = localStorage.getItem('ep_id');
 
-      if (!localStorage.getItem('ep_name')) {
+      if (savedName) {
+        document.getElementById("Name").value = savedName;
+        document.getElementById("Department").value = savedDept || "N/A";
+        document.getElementById("EmpID").value = savedID || "N/A";
+      } else {
+        // Agar data nahi mil raha toh wapas login par bhej do
         alert("Session expired. Please login again.");
         window.location.href = 'index.html';
       }
@@ -150,7 +159,7 @@
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
-      // Sheet columns sequence: Timestamp, EmpID, FromDate, ToDate, Type, Reason, Status, Name, Department
+      // Google Sheet ke Columns (A to I) ke mutabiq data
       const leaveData = {
         Timestamp: new Date().toLocaleString(),
         EmpID: document.getElementById("EmpID").value,
@@ -163,36 +172,35 @@
         Department: document.getElementById("Department").value
       };
 
-      // Basic validation
-      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "Not Set") {
-        statusMsg.textContent = "Error: Please fill all fields or re-login!";
+      // Validation
+      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "N/A") {
+        statusMsg.textContent = "Error: Please fill all fields properly.";
         statusMsg.className = "status error";
         statusMsg.style.display = "block";
         return;
       }
 
+      // Button disable aur Loading show karna
       btn.disabled = true;
       statusMsg.className = "status info";
-      statusMsg.textContent = "Sending request to Leave_Requests...";
+      statusMsg.textContent = "Processing your request...";
       statusMsg.style.display = "block";
 
       try {
-        // Yeh function app.js mein define hona chahiye jo Google Apps Script ko data bheje
+        // Dashboard wali app.js ka function use kar rahe hain
         await applyLeave(leaveData); 
 
-        statusMsg.textContent = "Leave request submitted successfully!";
+        statusMsg.textContent = "Leave Applied Successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
         
-        // Form reset hone ke baad auto-fields ko phir se fill karna
+        // Reset ke baad auto-fields wapas fill karna
         document.getElementById("Name").value = localStorage.getItem('ep_name');
         document.getElementById("Department").value = localStorage.getItem('ep_dept');
         document.getElementById("EmpID").value = localStorage.getItem('ep_id');
-        document.getElementById("FromDate").value = new Date().toISOString().split("T")[0];
-        document.getElementById("ToDate").value = new Date().toISOString().split("T")[0];
-
+        
       } catch (err) {
-        statusMsg.textContent = "Error: " + (err.message || "Failed to submit");
+        statusMsg.textContent = "Error: " + err.message;
         statusMsg.className = "status error";
       } finally {
         btn.disabled = false;
@@ -201,3 +209,5 @@
   </script>
 </body>
 </html>
+
+
