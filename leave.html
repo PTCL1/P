@@ -103,9 +103,8 @@
         <select id="Type" required>
           <option value="" disabled selected>Select Leave Type</option>
           <option value="Sort Leave">Sort Leave</option>
-          <option value="Half Day">Half day</option>
+          <option value="Half Day">Half Day</option>
           <option value="Full Day">Full Day</option>
-          
         </select>
       </div>
 
@@ -125,24 +124,24 @@
 
   <script src="app.js"></script>
   <script>
+    // Page load hote hi data auto-fill aur back-date block karne ke liye
     window.onload = function () {
       const today = new Date().toISOString().split("T")[0];
       
-      // 1. Set Min Date (No Back Dates)
       const fromInp = document.getElementById("FromDate");
       const toInp = document.getElementById("ToDate");
-      fromInp.min = today;
-      toInp.min = today;
-      fromInp.value = today;
-      toInp.value = today;
+      
+      if(fromInp) { fromInp.min = today; fromInp.value = today; }
+      if(toInp) { toInp.min = today; toInp.value = today; }
 
-      // 2. Auto-fill from LocalStorage
-      document.getElementById("Name").value = localStorage.getItem('ep_name') || '';
+      // LocalStorage se data uthana
+      // Note: Login script mein 'ep_name', 'ep_dept', 'ep_id' isi naam se save hona chahiye
+      document.getElementById("Name").value = localStorage.getItem('ep_name') || 'No Name';
       document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'N/A';
-      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || '';
+      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || 'Not Set';
 
       if (!localStorage.getItem('ep_name')) {
-        alert("Please login first.");
+        alert("Session expired. Please login again.");
         window.location.href = 'index.html';
       }
     };
@@ -151,21 +150,22 @@
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
-      // Sheet Columns Order ke mutabiq data object
+      // Sheet columns sequence: Timestamp, EmpID, FromDate, ToDate, Type, Reason, Status, Name, Department
       const leaveData = {
-        Timestamp: new Date().toLocaleString(), // Column A
-        EmpID: document.getElementById("EmpID").value, // Column B
-        FromDate: document.getElementById("FromDate").value, // Column C
-        ToDate: document.getElementById("ToDate").value, // Column D
-        Type: document.getElementById("Type").value, // Column E
-        Reason: document.getElementById("Reason").value.trim(), // Column F
-        Status: "Pending", // Column G (Default)
-        Name: document.getElementById("Name").value, // Column H
-        Department: document.getElementById("Department").value // Column I
+        Timestamp: new Date().toLocaleString(),
+        EmpID: document.getElementById("EmpID").value,
+        FromDate: document.getElementById("FromDate").value,
+        ToDate: document.getElementById("ToDate").value,
+        Type: document.getElementById("Type").value,
+        Reason: document.getElementById("Reason").value.trim(),
+        Status: "Pending",
+        Name: document.getElementById("Name").value,
+        Department: document.getElementById("Department").value
       };
 
-      if(!leaveData.Type || !leaveData.Reason) {
-        statusMsg.textContent = "Please fill all required fields.";
+      // Basic validation
+      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "Not Set") {
+        statusMsg.textContent = "Error: Please fill all fields or re-login!";
         statusMsg.className = "status error";
         statusMsg.style.display = "block";
         return;
@@ -173,18 +173,18 @@
 
       btn.disabled = true;
       statusMsg.className = "status info";
-      statusMsg.textContent = "Saving to Leave_Requests...";
+      statusMsg.textContent = "Sending request to Leave_Requests...";
       statusMsg.style.display = "block";
 
       try {
-        // App.js ka function jo data save karega
+        // Yeh function app.js mein define hona chahiye jo Google Apps Script ko data bheje
         await applyLeave(leaveData); 
 
-        statusMsg.textContent = "Leave Applied Successfully!";
+        statusMsg.textContent = "Leave request submitted successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
         
-        // Auto-fields ko dobara fill karna reset ke baad
+        // Form reset hone ke baad auto-fields ko phir se fill karna
         document.getElementById("Name").value = localStorage.getItem('ep_name');
         document.getElementById("Department").value = localStorage.getItem('ep_dept');
         document.getElementById("EmpID").value = localStorage.getItem('ep_id');
@@ -192,7 +192,7 @@
         document.getElementById("ToDate").value = new Date().toISOString().split("T")[0];
 
       } catch (err) {
-        statusMsg.textContent = "Error: " + err.message;
+        statusMsg.textContent = "Error: " + (err.message || "Failed to submit");
         statusMsg.className = "status error";
       } finally {
         btn.disabled = false;
