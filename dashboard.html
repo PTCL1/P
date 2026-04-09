@@ -105,9 +105,10 @@
   <div class="btn-item" onclick="handleAction('attendance')"><img src="photos/attendance.png"><span>Attendance</span></div>
   <div class="btn-item" onclick="handleAction('salary')"><img src="photos/salary.png"><span>Salary Slip</span></div>
   <div class="btn-item" onclick="handleAction('documents')"><img src="photos/docs.png"><span>Documents</span></div>
+    <div class="btn-item" onclick="handleAction('HR_Policies')"><img src="photos/docs.png"><span>HR_Policies</span></div>
   <div class="btn-item" onclick="handleAction('complaints')"><img src="photos/status.png"><span>Comp. Status</span></div>
   <div class="btn-item" onclick="window.location.href='COM.HTML'"><img src="photos/apply.png"><span>Comp. Apply</span></div>
-  <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Hr Policies</span></div>
+  <div class="btn-item" onclick="handleAction('bonus')"><img src="photos/bonus.png"><span>Bonus</span></div>
   <div class="btn-item" onclick="handleAction('leaves')"><img src="photos/leave-req.png"><span>Leave Status</span></div>
   <div class="btn-item" onclick="showLeaveModal()"><img src="photos/leave-apply.png"><span>Leave Apply</span></div>
   <div class="btn-item" onclick="handleAction('holidays')"><img src="photos/holiday.png"><span>Holiday List</span></div>
@@ -195,6 +196,13 @@
       const html = rows.map(r => `<tr><td>${esc(pick(r, ['Month (MMM-YY)', 'Month'], '-'))}</td><td>${esc(pick(r, ['Holiday Date(DD-MMM-YY)', 'Date'], '-'))}</td><td>${esc(pick(r, ['Status'], '-'))}</td><td>${esc(pick(r, ['Days'], '-'))}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Date</th><th>Status</th><th>Days</th></tr>${html || '<tr><td colspan="4">No holidays</td></tr>'}</table>`;
     }
+    else if (key === 'HR_Policies') {
+      const rows = d.HR_Policies || d.HR_Policies || [];
+      const html = rows.map(r => `<tr><td>${esc(pick(r, ['Month (MMM-YY)', 'Month'], '-'))}</td><td>${esc(pick(r, ['HR_Policies Date(DD-MMM-YY)', 'Date'], '-'))}</td><td>${esc(pick(r, ['Status'], '-'))}</td><td>${esc(pick(r, ['Days'], '-'))}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Date</th><th>Status</th><th>Days</th></tr>${html || '<tr><td colspan="4">No HR_Policies</td></tr>'}</table>`;
+    }
+
+    
   }
 
   // --- LEAVE MODAL & INIT ---
@@ -223,7 +231,7 @@
         ${kv('Employee ID', p.EmpID)}
         ${kv('Emp Code', p.EmpCode)}
         ${kv('Designation', p.Designation)}
-        ${kv('EmergencyContact', p.EmergencyContact)}
+        ${kv('Emergency Details', p.EmergencyContact)}
         ${kv('Mobile', p.Mobile)}
         ${kv('Joining Date', p.JoiningDate)}
         ${kv('Status', p.Status)}
