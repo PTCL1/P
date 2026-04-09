@@ -18,59 +18,29 @@
     * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
     
     body { 
-      margin: 0; 
-      background: var(--bg); 
-      color: var(--text); 
-      font-family: 'Inter', sans-serif; 
-      min-height: 100vh;
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 20px;
+      margin: 0; background: var(--bg); color: var(--text); 
+      font-family: 'Inter', sans-serif; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
     }
 
     .container { 
-      width: min(500px, 100%); 
-      background: var(--bg); 
-      border-radius: 40px; 
-      padding: 40px 30px; 
-      box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
+      width: min(500px, 100%); background: var(--bg); border-radius: 40px; 
+      padding: 40px 30px; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
       text-align: center;
     }
 
     h2 { 
-      font-size: 22px; 
-      font-weight: 800; 
-      margin-bottom: 25px; 
-      color: #222; 
-      text-transform: uppercase; 
-      border-bottom: 3px solid var(--green-accent);
-      display: inline-block;
-      padding-bottom: 5px;
+      font-size: 22px; font-weight: 800; margin-bottom: 25px; color: #222; 
+      text-transform: uppercase; border-bottom: 3px solid var(--green-accent);
+      display: inline-block; padding-bottom: 5px;
     }
 
     .form-group { text-align: left; margin-bottom: 15px; }
-    
-    label { 
-      display: block; 
-      font-size: 11px; 
-      font-weight: 800; 
-      color: #777; 
-      margin-left: 15px; 
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
+    label { display: block; font-size: 11px; font-weight: 800; color: #777; margin-left: 15px; margin-bottom: 6px; text-transform: uppercase; }
 
     input, textarea, select { 
-      width: 100%; 
-      padding: 14px 20px; 
-      background: var(--bg); 
-      border: none; 
-      border-radius: 15px; 
-      outline: none; 
-      color: #444;
-      font-weight: 600;
-      font-size: 14px;
+      width: 100%; padding: 14px 20px; background: var(--bg); border: none; border-radius: 15px; 
+      outline: none; color: #444; font-weight: 600; font-size: 14px;
       box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
     }
 
@@ -80,16 +50,9 @@
     .row .form-group { flex: 1; }
 
     .btn-group { display: flex; gap: 15px; margin-top: 25px; }
-
     button { 
-      flex: 1;
-      padding: 15px; 
-      border-radius: 15px; 
-      border: none;
-      background: var(--bg);
-      font-weight: 800; 
-      cursor: pointer; 
-      box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+      flex: 1; padding: 15px; border-radius: 15px; border: none; background: var(--bg);
+      font-weight: 800; cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
       text-transform: uppercase;
     }
 
@@ -99,6 +62,7 @@
     .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
     .status.success { color: var(--green-accent); display: block; }
     .status.error { color: var(--danger); display: block; }
+    .status.info { color: #555; display: block; }
   </style>
 </head>
 <body>
@@ -110,44 +74,48 @@
       <div class="row">
         <div class="form-group">
           <label>Employee Name</label>
-          <input type="text" id="empName" readonly>
+          <input type="text" id="Name" readonly>
         </div>
         <div class="form-group">
           <label>Department</label>
-          <input type="text" id="dept" readonly>
+          <input type="text" id="Department" readonly>
         </div>
       </div>
 
-      <input type="hidden" id="empID">
+      <div class="form-group">
+        <label>Employee ID</label>
+        <input type="text" id="EmpID" readonly>
+      </div>
 
       <div class="row">
         <div class="form-group">
           <label>From Date</label>
-          <input type="date" id="fromDate" required>
+          <input type="date" id="FromDate" required>
         </div>
         <div class="form-group">
           <label>To Date</label>
-          <input type="date" id="toDate" required>
+          <input type="date" id="ToDate" required>
         </div>
       </div>
 
       <div class="form-group">
         <label>Leave Type</label>
-        <select id="leaveType" required>
+        <select id="Type" required>
           <option value="" disabled selected>Select Leave Type</option>
-          <option value="Short Leave">Short Leave</option>
-          <option value="Half Day">Half Day</option>
+          <option value="Sort Leave">Sort Leave</option>
+          <option value="Half Day">Half day</option>
           <option value="Full Day">Full Day</option>
+          
         </select>
       </div>
 
       <div class="form-group">
         <label>Reason</label>
-        <textarea id="reason" placeholder="Mention reason here..." required></textarea>
+        <textarea id="Reason" placeholder="Explain your reason..." required></textarea>
       </div>
 
       <div class="btn-group">
-        <button id="submitBtn" type="button" onclick="handleLeaveSubmit()">Submit</button>
+        <button id="submitBtn" type="button" onclick="submitLeaveData()">Submit Request</button>
         <button type="button" onclick="window.history.back()">Back</button>
       </div>
     </form>
@@ -160,69 +128,69 @@
     window.onload = function () {
       const today = new Date().toISOString().split("T")[0];
       
-      // 1. Back date block logic
-      const fromInput = document.getElementById("fromDate");
-      const toInput = document.getElementById("toDate");
-      fromInput.min = today;
-      toInput.min = today;
-      fromInput.value = today;
-      toInput.value = today;
+      // 1. Set Min Date (No Back Dates)
+      const fromInp = document.getElementById("FromDate");
+      const toInp = document.getElementById("ToDate");
+      fromInp.min = today;
+      toInp.min = today;
+      fromInp.value = today;
+      toInp.value = today;
 
       // 2. Auto-fill from LocalStorage
-      const name = localStorage.getItem('ep_name');
-      const department = localStorage.getItem('ep_dept'); // Login script me ye save hona chahiye
-      const id = localStorage.getItem('ep_id');
+      document.getElementById("Name").value = localStorage.getItem('ep_name') || '';
+      document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'N/A';
+      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || '';
 
-      if (name) {
-        document.getElementById("empName").value = name;
-        document.getElementById("dept").value = department || 'General';
-        document.getElementById("empID").value = id || '';
-      } else {
-        alert("Session expired. Please login again.");
+      if (!localStorage.getItem('ep_name')) {
+        alert("Please login first.");
         window.location.href = 'index.html';
       }
     };
 
-    async function handleLeaveSubmit() {
+    async function submitLeaveData() {
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
-      // Yeh saara data Sheet ke headers ke mutabiq hai
-      const data = {
-        Timestamp: new Date().toLocaleString(),
-        EmpID: document.getElementById("empID").value,
-        FromDate: document.getElementById("fromDate").value,
-        ToDate: document.getElementById("toDate").value,
-        Type: document.getElementById("leaveType").value,
-        Reason: document.getElementById("reason").value.trim(),
-        Status: "Pending",
-        Name: document.getElementById("empName").value,
-        Department: document.getElementById("dept").value
+      // Sheet Columns Order ke mutabiq data object
+      const leaveData = {
+        Timestamp: new Date().toLocaleString(), // Column A
+        EmpID: document.getElementById("EmpID").value, // Column B
+        FromDate: document.getElementById("FromDate").value, // Column C
+        ToDate: document.getElementById("ToDate").value, // Column D
+        Type: document.getElementById("Type").value, // Column E
+        Reason: document.getElementById("Reason").value.trim(), // Column F
+        Status: "Pending", // Column G (Default)
+        Name: document.getElementById("Name").value, // Column H
+        Department: document.getElementById("Department").value // Column I
       };
 
-      if(!data.Type || !data.Reason) {
-        statusMsg.textContent = "Please fill all fields.";
+      if(!leaveData.Type || !leaveData.Reason) {
+        statusMsg.textContent = "Please fill all required fields.";
         statusMsg.className = "status error";
         statusMsg.style.display = "block";
         return;
       }
 
       btn.disabled = true;
-      statusMsg.textContent = "Saving to Leave_Requests...";
       statusMsg.className = "status info";
+      statusMsg.textContent = "Saving to Leave_Requests...";
       statusMsg.style.display = "block";
 
       try {
-        // App.js me function: await applyLeave(data)
-        await applyLeave(data); 
+        // App.js ka function jo data save karega
+        await applyLeave(leaveData); 
 
-        statusMsg.textContent = "Submitted successfully!";
+        statusMsg.textContent = "Leave Applied Successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
         
-        // Reset auto fields
-        document.getElementById("empName").value = localStorage.getItem('ep_name');
-        document.getElementById("dept").value = localStorage.getItem('ep_dept') || 'General';
+        // Auto-fields ko dobara fill karna reset ke baad
+        document.getElementById("Name").value = localStorage.getItem('ep_name');
+        document.getElementById("Department").value = localStorage.getItem('ep_dept');
+        document.getElementById("EmpID").value = localStorage.getItem('ep_id');
+        document.getElementById("FromDate").value = new Date().toISOString().split("T")[0];
+        document.getElementById("ToDate").value = new Date().toISOString().split("T")[0];
+
       } catch (err) {
         statusMsg.textContent = "Error: " + err.message;
         statusMsg.className = "status error";
