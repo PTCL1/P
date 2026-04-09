@@ -6,63 +6,45 @@
   <title>Apply Leave | PTCL</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root { 
-      --bg: #e0e5ec; 
-      --text: #444; 
-      --green-accent: #27ae60; 
-      --shadow-dark: #a3b1c6;
-      --shadow-light: #ffffff;
-      --danger: #e74c3c;
-    }
-
+    :root { --bg: #e0e5ec; --text: #444; --green-accent: #27ae60; --shadow-dark: #a3b1c6; --shadow-light: #ffffff; --danger: #e74c3c; }
     * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
     body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-
     .container { width: min(500px, 100%); background: var(--bg); border-radius: 40px; padding: 40px 30px; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light); text-align: center; }
     h2 { font-size: 22px; font-weight: 800; margin-bottom: 25px; color: #222; text-transform: uppercase; border-bottom: 3px solid var(--green-accent); display: inline-block; padding-bottom: 5px; }
-
     .form-group { text-align: left; margin-bottom: 15px; }
     label { display: block; font-size: 11px; font-weight: 800; color: #777; margin-left: 15px; margin-bottom: 6px; text-transform: uppercase; }
-
     input, textarea, select { width: 100%; padding: 14px 20px; background: var(--bg); border: none; border-radius: 15px; outline: none; color: #444; font-weight: 600; font-size: 14px; box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
     input:read-only { background: #dce1e9; color: #666; cursor: not-allowed; }
-
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; }
-
     .btn-group { display: flex; gap: 15px; margin-top: 25px; }
     button { flex: 1; padding: 15px; border-radius: 15px; border: none; background: var(--bg); font-weight: 800; cursor: pointer; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); text-transform: uppercase; }
     #submitBtn { color: var(--green-accent); }
     button:active { transform: scale(0.95); }
-
     .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
     .status.success { color: var(--green-accent); display: block; }
     .status.error { color: var(--danger); display: block; }
-    .status.info { color: #555; display: block; }
   </style>
 </head>
 <body>
 
-  <div class="container" id="mainContainer">
+  <div class="container">
     <h2>Apply Leave</h2>
-
     <form id="leaveForm">
       <div class="row">
         <div class="form-group">
           <label>Employee Name</label>
-          <input type="text" id="Name" readonly placeholder="Loading...">
+          <input type="text" id="Name" readonly>
         </div>
         <div class="form-group">
           <label>Department</label>
-          <input type="text" id="Department" readonly placeholder="Loading...">
+          <input type="text" id="Department" readonly>
         </div>
       </div>
-
       <div class="form-group">
         <label>Employee ID</label>
-        <input type="text" id="EmpID" readonly placeholder="Loading...">
+        <input type="text" id="EmpID" readonly>
       </div>
-
       <div class="row">
         <div class="form-group">
           <label>From Date</label>
@@ -73,7 +55,6 @@
           <input type="date" id="ToDate" required>
         </div>
       </div>
-
       <div class="form-group">
         <label>Leave Type</label>
         <select id="Type" required>
@@ -83,56 +64,50 @@
           <option value="Full Day">Full Day</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>Reason</label>
         <textarea id="Reason" placeholder="Explain your reason..." required></textarea>
       </div>
-
       <div class="btn-group">
         <button id="submitBtn" type="button" onclick="submitLeaveData()">Submit Request</button>
         <button type="button" onclick="window.history.back()">Back</button>
       </div>
     </form>
-
     <div class="status" id="statusMsg"></div>
   </div>
 
   <script src="app.js"></script>
   <script>
-    // Global variable to store profile data
-    let userProfile = null;
-
-    window.onload = async function () {
+    window.onload = function () {
+      // 1. Aaj ki date set karna aur PAST dates block karna
       const today = new Date().toISOString().split("T")[0];
       const fromInp = document.getElementById("FromDate");
       const toInp = document.getElementById("ToDate");
       
-      if(fromInp) { fromInp.min = today; fromInp.value = today; }
-      if(toInp) { toInp.min = today; toInp.value = today; }
+      fromInp.value = today;
+      fromInp.min = today; // Aaj se purani date select nahi hogi
+      toInp.value = today;
+      toInp.min = today;   // Aaj se purani date select nahi hogi
 
-      // Dashboard logic ki tarah data fetch karna
-      try {
-        const d = await fetchMe(); // Dashboard wala function
+      // 2. LocalStorage se instant data load karna
+      document.getElementById("Name").value = localStorage.getItem('ep_name') || 'Not Set';
+      document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'Not Set';
+      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || 'Not Set';
+
+      // 3. Background mein data verify karna (FetchMe)
+      fetchMe().then(d => {
         if (d && d.profile) {
-          userProfile = d.profile;
-          document.getElementById("Name").value = userProfile.Name || '';
-          document.getElementById("Department").value = userProfile.Department || '';
-          document.getElementById("EmpID").value = userProfile.EmpID || '';
-        } else {
-          throw new Error("Profile not found");
+          document.getElementById("Name").value = d.profile.Name;
+          document.getElementById("Department").value = d.profile.Department;
+          document.getElementById("EmpID").value = d.profile.EmpID;
         }
-      } catch (e) {
-        alert("Session expired or Data error. Redirecting to login...");
-        window.location.href = 'index.html';
-      }
+      });
     };
 
     async function submitLeaveData() {
       const statusMsg = document.getElementById("statusMsg");
       const btn = document.getElementById("submitBtn");
 
-      // Sheet columns ke exact sequence (A to I) ke mutabiq
       const leaveData = {
         Timestamp: new Date().toLocaleString(),
         EmpID: document.getElementById("EmpID").value,
@@ -145,17 +120,16 @@
         Department: document.getElementById("Department").value
       };
 
-      // Validation logic check
-      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "" || leaveData.EmpID === "Loading...") {
-        statusMsg.textContent = "Error: Please wait for details to load or fill all fields!";
+      if(!leaveData.Type || !leaveData.Reason || leaveData.EmpID === "Not Set") {
+        statusMsg.textContent = "Error: Please fill all fields!";
         statusMsg.className = "status error";
         statusMsg.style.display = "block";
         return;
       }
 
       btn.disabled = true;
-      statusMsg.className = "status info";
       statusMsg.textContent = "Saving request...";
+      statusMsg.className = "status info";
       statusMsg.style.display = "block";
 
       try {
@@ -163,14 +137,7 @@
         statusMsg.textContent = "Leave Applied Successfully!";
         statusMsg.className = "status success";
         document.getElementById("leaveForm").reset();
-        
-        // Data refill after reset
-        document.getElementById("Name").value = userProfile.Name;
-        document.getElementById("Department").value = userProfile.Department;
-        document.getElementById("EmpID").value = userProfile.EmpID;
-        document.getElementById("FromDate").value = new Date().toISOString().split("T")[0];
-        document.getElementById("ToDate").value = new Date().toISOString().split("T")[0];
-
+        window.onload(); // Refill read-only fields
       } catch (err) {
         statusMsg.textContent = "Error: " + err.message;
         statusMsg.className = "status error";
