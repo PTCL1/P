@@ -196,14 +196,14 @@
       const html = rows.map(r => `<tr><td>${esc(pick(r, ['Month (MMM-YY)', 'Month'], '-'))}</td><td>${esc(pick(r, ['Holiday Date(DD-MMM-YY)', 'Date'], '-'))}</td><td>${esc(pick(r, ['Status'], '-'))}</td><td>${esc(pick(r, ['Days'], '-'))}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Month</th><th>Date</th><th>Status</th><th>Days</th></tr>${html || '<tr><td colspan="4">No holidays</td></tr>'}</table>`;
     }
-    else if (key === 'HR_Policies') {
-      const rows = d.HR_Policies || d.HR_Policies || [];
-            const html = rows.map(r => `<tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank">Open</a>` : '-'}</td></tr>`).join('');
+else if (key === 'HR_Policies') {
+      const rows = d.HR_Policies || [];
+      const html = rows.map(r => `<tr><td>${esc(r.Type||'')}</td><td>${esc(r.Name||'')}</td><td>${r.FileUrl ? `<a href="${escAttr(r.FileUrl)}" target="_blank">Open</a>` : '-'}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3">No docs</td></tr>'}</table>`;
+    } // <-- Ye wala bracket missing tha, maine laga diya hai
+  } // Ye openSection function ka closing bracket hai
 
-    
-  }
-
+  
   // --- LEAVE MODAL & INIT ---
   function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s); }
   function showLeaveModal() {
