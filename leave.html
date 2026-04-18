@@ -24,6 +24,7 @@
     .status { margin-top: 20px; font-size: 13px; font-weight: 700; display: none; padding: 10px; border-radius: 10px; }
     .status.success { color: var(--green-accent); display: block; }
     .status.error { color: var(--danger); display: block; }
+    .status.info { color: #2980b9; display: block; }
   </style>
 </head>
 <body>
@@ -59,7 +60,7 @@
         <label>Leave Type</label>
         <select id="Type" required>
           <option value="" disabled selected>Select Leave Type</option>
-          <option value="Sort Leave">Sort Leave</option>
+          <option value="Short Leave">Short Leave</option>
           <option value="Half Day">Half Day</option>
           <option value="Full Day">Full Day</option>
         </select>
@@ -77,83 +78,95 @@
   </div>
 
   <script src="app.js"></script>
+
   <script>
     window.onload = function () {
-      // 1. Aaj ki date set karna aur PAST dates block karna
+      // 1. Date setting
       const today = new Date().toISOString().split("T")[0];
       const fromInp = document.getElementById("FromDate");
       const toInp = document.getElementById("ToDate");
       
       fromInp.value = today;
-      fromInp.min = today; // Aaj se purani date select nahi hogi
+      fromInp.min = today;
       toInp.value = today;
-      toInp.min = today;   // Aaj se purani date select nahi hogi
+      toInp.min = today;
 
-      // 2. LocalStorage se instant data load karna
-      document.getElementById("Name").value = localStorage.getItem('ep_name') || 'Not Set';
-      document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'Not Set';
-      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || 'Not Set';
+      // 2. LocalStorage se data load karna (Keys match with app.js)
+      document.getElementById("Name").value = localStorage.getItem('ep_name') || 'Loading...';
+      document.getElementById("Department").value = localStorage.getItem('ep_dept') || 'Loading...';
+      document.getElementById("EmpID").value = localStorage.getItem('ep_id') || 'Loading...';
 
-      // 3. Background mein data verify karna (FetchMe)
-      fetchMe().then(d => {
-        if (d && d.profile) {
-          document.getElementById("Name").value = d.profile.Name;
-          document.getElementById("Department").value = d.profile.Department;
-          document.getElementById("EmpID").value = d.profile.EmpID;
-        }
-      });
+      // 3. Data verify karna via app.js function
+      if (typeof fetchMe === "function") {
+        fetchMe().then(d => {
+          if (d && d.profile) {
+            document.getElementById("Name").value = d.profile.Name;
+            document.getElementById("Department").value = d.profile.Department;
+            document.getElementById("EmpID").value = d.profile.EmpID;
+            // Backup save to localstorage
+            localStorage.setItem('ep_dept', d.profile.Department);
+            localStorage.setItem('ep_id', d.profile.EmpID);
+          }
+        }).catch(err => console.log("Profile sync failed:", err.message));
+      }
     };
 
-async function submitLeaveData() {
-  const statusMsg = document.getElementById("statusMsg");
-  const btn = document.getElementById("submitBtn");
+    async function submitLeaveData() {
+      const statusMsg = document.getElementById("statusMsg");
+      const btn = document.getElementById("submitBtn");
 
-  // Check karein ke fields khali na hon
-  const empId = document.getElementById("EmpID").value;
-  const type = document.getElementById("Type").value;
-  const reason = document.getElementById("Reason").value.trim();
+      // Fields validation
+      const type = document.getElementById("Type").value;
+      const reason = document.getElementById("Reason").value.trim();
+      const empId = document.getElementById("EmpID").value;
 
-  if (!type || !reason || !empId || empId === "Loading...") {
-    statusMsg.textContent = "Error: Please fill all fields and wait for ID to load!";
-    statusMsg.className = "status error";
-    statusMsg.style.display = "block";
-    return;
-  }
+      if (!type || !reason || empId === "Loading...") {
+        statusMsg.textContent = "Error: Please fill all fields and wait for profile to load!";
+        statusMsg.className = "status error";
+        return;
+      }
 
-  const leaveData = {
-    action: 'applyleave', // Ye batana zaroori hai
-    token: localStorage.getItem('token'), // Auth ke liye
-    fromDate: document.getElementById("FromDate").value,
-    toDate: document.getElementById("ToDate").value,
-    type: type,
-    reason: reason,
-    name: document.getElementById("Name").value,
-    department: document.getElementById("Department").value
-  };
+      // Payload taiyar karna (app.js ke applyLeave ko token nahi bhejte, wo khud nikalta hai)
+      const payload = {
+        fromDate: document.getElementById("FromDate").value,
+        toDate: document.getElementById("ToDate").value,
+        type: type,
+        reason: reason,
+        name: document.getElementById("Name").value,
+        department: document.getElementById("Department").value
+      };
 
-  btn.disabled = true;
-  statusMsg.textContent = "Submitting to PTCL Server...";
-  statusMsg.className = "status info";
-  statusMsg.style.display = "block";
+      btn.disabled = true;
+      statusMsg.textContent = "Submitting to PTCL Server...";
+      statusMsg.className = "status info";
 
-  try {
-    // Ye app.js ka function hai
-    const response = await applyLeave(leaveData); 
-    if(response.ok) {
-      statusMsg.textContent = "Success! Your leave request is PENDING.";
-      statusMsg.className = "status success";
-      document.getElementById("leaveForm").reset();
-      window.onload(); // Fields wapas bharne ke liye
-    } else {
-      throw new Error(response.error);
+      try {
+        // App.js ka applyLeave call karein
+        const response = await applyLeave(payload); 
+        
+        // Agar yahan tak aa gaya, matlab response.ok true tha
+        statusMsg.textContent = "Success! Your leave request is PENDING.";
+        statusMsg.className = "status success";
+        document.getElementById("leaveForm").reset();
+        
+        // Refresh values
+        setTimeout(() => {
+          window.onload();
+          statusMsg.style.display = "none";
+        }, 3000);
+
+      } catch (err) {
+        statusMsg.textContent = "Failed: " + err.message;
+        statusMsg.className = "status error";
+        
+        // Agar token missing ka error hai toh login par bhej sakte hain
+        if (err.message.includes("token")) {
+           statusMsg.textContent = "Session Expired! Please Login again.";
+        }
+      } finally {
+        btn.disabled = false;
+      }
     }
-  } catch (err) {
-    statusMsg.textContent = "Failed: " + err.message;
-    statusMsg.className = "status error";
-  } finally {
-    btn.disabled = false;
-  }
-}
   </script>
 </body>
 </html>
